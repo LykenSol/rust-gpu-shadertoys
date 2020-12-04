@@ -1,0 +1,12 @@
+[package]
+name = "shadertoys-shaders"
+version = "0.0.0"
+authors = []
+edition = "2018"
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
+spirv-std = "*"
+shared = { path = "../shared" }

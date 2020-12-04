@@ -1,0 +1,27 @@
+[package]
+name = "shadertoys-wgpu"
+version = "0.0.0"
+authors = []
+edition = "2018"
+
+[features]
+default = ["use-compiled-tools"]
+use-installed-tools = ["spirv-builder/use-installed-tools"]
+use-compiled-tools = ["spirv-builder/use-compiled-tools"]
+
+[dependencies]
+shared = { path = "shared" }
+futures = { version = "0.3", default-features = false, features = ["std", "executor"] }
+wgpu = "0.6.0"
+winit = { version = "0.23", features = ["web-sys"] }
+wgpu-subscriber = "0.1.0"
+
+[build-dependencies]
+spirv-builder = { version = "*", default-features = false }
+
+[workspace]
+members = ["shaders"]
+
+[patch.crates-io]
+spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "c1dc273e706fa0e09a651131e1adee39bd49c2b2" }
+spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "c1dc273e706fa0e09a651131e1adee39bd49c2b2" }

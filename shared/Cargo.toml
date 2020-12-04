@@ -1,0 +1,8 @@
+[package]
+name = "shared"
+version = "0.0.0"
+authors = []
+edition = "2018"
+
+[dependencies]
+spirv-std = "*"
