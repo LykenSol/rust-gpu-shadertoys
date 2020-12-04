@@ -200,7 +200,7 @@ impl Inputs {
                     let mut y = 0;
                     while y < 3 {
                         let mapoffset: Vec2 =
-                            map + Vec2::new(*[&c.x, &c.y, &c.z][x], *[&c.x, &c.y, &c.z][y]);
+                            map + Vec2::new([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
                         let mut offset: Vec2 = Vec2::zero();
                         get_sphere_offset(mapoffset, &mut offset);
                         let lcolor: Vec3 = get_sphere_color(mapoffset);
@@ -219,8 +219,8 @@ impl Inputs {
                                         continue;
                                     }
 
-                                    let smapoffset: Vec2 = map
-                                        + Vec2::new(*[&c.x, &c.y, &c.z][x], *[&c.x, &c.y, &c.z][y]);
+                                    let smapoffset: Vec2 =
+                                        map + Vec2::new([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
                                     let mut soffset: Vec2 = Vec2::zero();
                                     get_sphere_offset(smapoffset, &mut soffset);
                                     let mut slpos: Vec3 = Vec3::zero();
