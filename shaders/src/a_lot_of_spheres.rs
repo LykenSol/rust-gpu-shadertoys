@@ -12,7 +12,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{const_mat2, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{const_mat2, vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -46,16 +46,16 @@ fn hash(n: f32) -> f32 {
     (n.sin() * 43758.5453).gl_fract()
 }
 fn _hash2(n: f32) -> Vec2 {
-    (Vec2::new(n, n + 1.0).sin() * Vec2::new(2.1459123, 3.3490423)).gl_fract()
+    (vec2(n, n + 1.0).sin() * vec2(2.1459123, 3.3490423)).gl_fract()
 }
 fn hash2_vec(n: Vec2) -> Vec2 {
-    (Vec2::new(n.x * n.y, n.x + n.y).sin() * Vec2::new(2.1459123, 3.3490423)).gl_fract()
+    (vec2(n.x * n.y, n.x + n.y).sin() * vec2(2.1459123, 3.3490423)).gl_fract()
 }
 fn _hash3(n: f32) -> Vec3 {
-    (Vec3::new(n, n + 1.0, n + 2.0).sin() * Vec3::new(3.5453123, 4.1459123, 1.3490423)).gl_fract()
+    (vec3(n, n + 1.0, n + 2.0).sin() * vec3(3.5453123, 4.1459123, 1.3490423)).gl_fract()
 }
 fn hash3_vec(n: Vec2) -> Vec3 {
-    (Vec3::new(n.x, n.y, n.x + 2.0).sin() * Vec3::new(3.5453123, 4.1459123, 1.3490423)).gl_fract()
+    (vec3(n.x, n.y, n.x + 2.0).sin() * vec3(3.5453123, 4.1459123, 1.3490423)).gl_fract()
 }
 
 //
@@ -98,7 +98,7 @@ fn intersect_unit_sphere(ro: Vec3, rd: Vec3, sph: Vec3, dist: &mut f32, normal: 
 //
 
 fn get_sphere_offset(grid: Vec2, center: &mut Vec2) {
-    *center = (hash2_vec(grid + Vec2::new(43.12, 1.23)) - Vec2::splat(0.5)) * (GRIDSIZESMALL);
+    *center = (hash2_vec(grid + vec2(43.12, 1.23)) - Vec2::splat(0.5)) * (GRIDSIZESMALL);
 }
 
 impl Inputs {
@@ -110,15 +110,15 @@ impl Inputs {
         let y: f32 = s * MAXHEIGHT * (4.0 * t * (1. - t)).abs();
         let offset: Vec2 = grid + sphere_offset;
 
-        *center = Vec3::new(offset.x, y, offset.y) + 0.5 * Vec3::new(GRIDSIZE, 2.0, GRIDSIZE);
+        *center = vec3(offset.x, y, offset.y) + 0.5 * vec3(GRIDSIZE, 2.0, GRIDSIZE);
     }
 }
 fn get_sphere_position(grid: Vec2, sphere_offset: Vec2, center: &mut Vec3) {
     let offset: Vec2 = grid + sphere_offset;
-    *center = Vec3::new(offset.x, 0.0, offset.y) + 0.5 * Vec3::new(GRIDSIZE, 2.0, GRIDSIZE);
+    *center = vec3(offset.x, 0.0, offset.y) + 0.5 * vec3(GRIDSIZE, 2.0, GRIDSIZE);
 }
 fn get_sphere_color(grid: Vec2) -> Vec3 {
-    hash3_vec(grid + Vec2::new(43.12 * grid.y, 12.23 * grid.x)).normalize()
+    hash3_vec(grid + vec2(43.12 * grid.y, 12.23 * grid.x)).normalize()
 }
 
 impl Inputs {
@@ -141,7 +141,7 @@ impl Inputs {
         if intersect_plane(ro, rd, 0.0, &mut distcheck) && distcheck < MAXDISTANCE {
             *dist = distcheck;
             *material = 1;
-            *normal = Vec3::new(0.0, 1.0, 0.0);
+            *normal = vec3(0.0, 1.0, 0.0);
             col = Vec3::one();
         } else {
             col = Vec3::zero();
@@ -194,13 +194,12 @@ impl Inputs {
 
             if *material == 1 || *material == 3 {
                 // lightning
-                let c: Vec3 = Vec3::new(-GRIDSIZE, 0.0, GRIDSIZE);
+                let c: Vec3 = vec3(-GRIDSIZE, 0.0, GRIDSIZE);
                 let mut x = 0;
                 while x < 3 {
                     let mut y = 0;
                     while y < 3 {
-                        let mapoffset: Vec2 =
-                            map + Vec2::new([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
+                        let mapoffset: Vec2 = map + vec2([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
                         let mut offset: Vec2 = Vec2::zero();
                         get_sphere_offset(mapoffset, &mut offset);
                         let lcolor: Vec3 = get_sphere_color(mapoffset);
@@ -220,7 +219,7 @@ impl Inputs {
                                     }
 
                                     let smapoffset: Vec2 =
-                                        map + Vec2::new([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
+                                        map + vec2([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
                                     let mut soffset: Vec2 = Vec2::zero();
                                     get_sphere_offset(smapoffset, &mut soffset);
                                     let mut slpos: Vec3 = Vec3::zero();
@@ -252,7 +251,7 @@ impl Inputs {
                 }
             } else {
                 // emitter
-                color = (1.5 + normal.dot(Vec3::new(0.5, 0.5, -0.5))) * get_sphere_color(map);
+                color = (1.5 + normal.dot(vec3(0.5, 0.5, -0.5))) * get_sphere_color(map);
             }
         }
         color
@@ -264,14 +263,14 @@ impl Inputs {
         p.x *= self.resolution.x / self.resolution.y;
 
         // camera
-        let ce: Vec3 = Vec3::new(
+        let ce: Vec3 = vec3(
             (0.232 * self.time).cos() * 10.0,
             6. + 3.0 * (0.3 * self.time).cos(),
             GRIDSIZE * (self.time / SPEED),
         );
         let ro: Vec3 = ce;
         let ta: Vec3 = ro
-            + Vec3::new(
+            + vec3(
                 -(0.232 * self.time).sin() * 10.,
                 -2.0 + (0.23 * self.time).cos(),
                 10.0,
@@ -280,7 +279,7 @@ impl Inputs {
         let roll: f32 = -0.15 * (0.5 * self.time).sin();
         // camera tx
         let cw: Vec3 = (ta - ro).normalize();
-        let cp: Vec3 = Vec3::new(roll.sin(), roll.cos(), 0.0);
+        let cp: Vec3 = vec3(roll.sin(), roll.cos(), 0.0);
         let cu: Vec3 = (cw.cross(cp)).normalize();
         let cv: Vec3 = (cu.cross(cw)).normalize();
         let mut rd: Vec3 = (p.x * cu + p.y * cv + 1.5 * cw).normalize();
@@ -312,7 +311,7 @@ impl Inputs {
                 );
         }
 
-        col = col.powf_vec(Vec3::new(EXPOSURE, EXPOSURE, EXPOSURE));
+        col = col.powf_vec(vec3(EXPOSURE, EXPOSURE, EXPOSURE));
         col = col.clamp(Vec3::zero(), Vec3::one());
         // vigneting
         col *= 0.25 + 0.75 * (16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y)).powf(0.15);

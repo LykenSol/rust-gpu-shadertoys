@@ -27,7 +27,9 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
+use spirv_std::glam::{
+    vec2, vec3, Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
+};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -60,7 +62,7 @@ fn stroke(d: f32, w: f32, s: f32, i: f32) -> f32 {
 }
 // a simple palette
 fn pal(d: f32) -> Vec3 {
-    0.5 * ((6.283 * d * Vec3::new(2.0, 2.0, 1.0) + Vec3::new(0.0, 1.4, 0.0)).cos() + Vec3::one())
+    0.5 * ((6.283 * d * vec3(2.0, 2.0, 1.0) + vec3(0.0, 1.4, 0.0)).cos() + Vec3::one())
 }
 // 2d rotation matrix
 fn uvr_rotate(a: f32) -> Mat2 {
@@ -72,7 +74,7 @@ fn inversion(uv: Vec2, r: f32) -> Vec2 {
 }
 // seeded random number
 fn hash(s: Vec2) -> f32 {
-    ((s.dot(Vec2::new(12.9898, 78.2333))).sin() * 43758.5453123).gl_fract()
+    ((s.dot(vec2(12.9898, 78.2333))).sin() * 43758.5453123).gl_fract()
 }
 
 // this is an algorithm to construct an apollonian packing with a descartes configuration
@@ -88,12 +90,12 @@ fn apollonian(uv: Vec2) -> Vec3 {
     let a: f32 = 6.283 / 3.;
     let ra: f32 = 1.0 + (a * 0.5).sin();
     let rb: f32 = 1.0 - (a * 0.5).sin();
-    dec[0] = Vec3::new(0.0, 0.0, -1.0 / ra);
+    dec[0] = vec3(0.0, 0.0, -1.0 / ra);
     let radius: f32 = 0.5 * (ra - rb);
     let bend: f32 = 1.0 / radius;
     let mut i = 1;
     while i < 4 {
-        dec[i] = Vec3::new((i as f32 * a).cos(), (i as f32 * a).sin(), bend);
+        dec[i] = vec3((i as f32 * a).cos(), (i as f32 * a).sin(), bend);
         // if the point is in one of the starting circles we have already found our solution
         if (uv - dec[i].xy()).length() < radius {
             return (uv - dec[i].xy()).extend(radius);
@@ -232,8 +234,8 @@ impl Inputs {
                 pal(0.85),
                 stroke(
                     sdf_rect(
-                        uvrh + Vec2::new(uv_apo.z - (uv_apo.z * 0.8), 0.0),
-                        uv_apo.z * Vec2::new(0.4, 0.03),
+                        uvrh + vec2(uv_apo.z - (uv_apo.z * 0.8), 0.0),
+                        uv_apo.z * vec2(0.4, 0.03),
                     ),
                     uv_apo.z * 0.01,
                     0.005,
@@ -245,8 +247,8 @@ impl Inputs {
                 pal(0.9),
                 fill(
                     sdf_rect(
-                        uvrm + Vec2::new(uv_apo.z - (uv_apo.z * 0.65), 0.0),
-                        uv_apo.z * Vec2::new(0.5, 0.002),
+                        uvrm + vec2(uv_apo.z - (uv_apo.z * 0.65), 0.0),
+                        uv_apo.z * vec2(0.5, 0.002),
                     ),
                     0.005,
                     1.0,
@@ -275,7 +277,7 @@ impl Inputs {
                 0.05,
                 1.0,
             );
-            let size: Vec2 = uv_apo.z * Vec2::new(0.45, 0.08);
+            let size: Vec2 = uv_apo.z * vec2(0.45, 0.08);
             c = mix(
                 c,
                 pal(0.55 - r * 0.6),
@@ -293,7 +295,7 @@ impl Inputs {
             );
         // drawing the screws
         } else {
-            let size: Vec2 = uv_apo.z * Vec2::new(0.5, 0.1);
+            let size: Vec2 = uv_apo.z * vec2(0.5, 0.1);
             c = mix(
                 c,
                 pal(0.85 - (uv_apo.z * 2.0)),

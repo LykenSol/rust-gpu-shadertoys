@@ -8,7 +8,7 @@
 
 use crate::Channel;
 use shared::*;
-use spirv_std::glam::{Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
+use spirv_std::glam::{vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -25,10 +25,10 @@ pub struct Inputs<C0> {
 const ZOOM: f32 = 1.0;
 
 fn _cmul(a: Vec2, b: Vec2) -> Vec2 {
-    Vec2::new(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x)
+    vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x)
 }
 fn csqr(a: Vec2) -> Vec2 {
-    Vec2::new(a.x * a.x - a.y * a.y, 2. * a.x * a.y)
+    vec2(a.x * a.x - a.y * a.y, 2. * a.x * a.y)
 }
 
 fn rot(a: f32) -> Mat2 {
@@ -45,7 +45,7 @@ fn i_sphere(ro: Vec3, rd: Vec3, sph: Vec4) -> Vec2 {
         return Vec2::splat(-1.0);
     }
     h = h.sqrt();
-    Vec2::new(-b - h, -b + h)
+    vec2(-b - h, -b + h)
 }
 
 fn map(mut p: Vec3) -> f32 {
@@ -79,9 +79,9 @@ impl<C0: Channel> Inputs<C0> {
 
             c = map(ro + t * rd);
 
-            col = 0.99 * col + 0.08 * Vec3::new(c * c, c, c * c * c); //green
+            col = 0.99 * col + 0.08 * vec3(c * c, c, c * c * c); //green
 
-            // col = 0.99 * col + 0.08 * Vec3::new(c * c * c, c * c, c); //blue
+            // col = 0.99 * col + 0.08 * vec3(c * c * c, c * c, c); //blue
             i += 1;
         }
         col
@@ -106,7 +106,7 @@ impl<C0: Channel> Inputs<C0> {
             .xzy();
         let ta: Vec3 = Vec3::zero();
         let ww: Vec3 = (ta - ro).normalize();
-        let uu: Vec3 = (ww.cross(Vec3::new(0.0, 1.0, 0.0))).normalize();
+        let uu: Vec3 = (ww.cross(vec3(0.0, 1.0, 0.0))).normalize();
         let vv: Vec3 = (uu.cross(ww)).normalize();
         let rd: Vec3 = (p.x * uu + p.y * vv + 4.0 * ww).normalize();
 

@@ -27,7 +27,9 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{const_mat3, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
+use spirv_std::glam::{
+    const_mat3, vec2, vec3, vec4, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
+};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -86,7 +88,7 @@ fn linstep(mn: f32, mx: f32, x: f32) -> f32 {
 }
 
 fn disp(t: f32) -> Vec2 {
-    Vec2::new((t * 0.22).sin() * 1.0, (t * 0.175).cos() * 1.0) * 2.0
+    vec2((t * 0.22).sin() * 1.0, (t * 0.175).cos() * 1.0) * 2.0
 }
 
 impl State {
@@ -116,7 +118,7 @@ impl State {
             i += 1;
         }
         d = (d + self.prm1 * 3.0).abs() + self.prm1 * 0.3 - 2.5 + self.bs_mo.y;
-        Vec2::new(d + cl * 0.2 + 0.25, cl)
+        vec2(d + cl * 0.2 + 0.25, cl)
     }
 
     fn render(&self, ro: Vec3, rd: Vec3, time: f32) -> Vec4 {
@@ -139,7 +141,7 @@ impl State {
 
             let mut col: Vec4 = Vec4::zero();
             if mpv.x > 0.6 {
-                col = ((Vec3::new(5.0, 0.4, 0.2)
+                col = ((vec3(5.0, 0.4, 0.2)
                     + Vec3::splat(mpv.y * 0.1 + (pos.z * 0.4).sin() * 0.5 + 1.8))
                 .sin()
                     * 0.5
@@ -152,12 +154,12 @@ impl State {
                 dif += ((den - self.map(pos + Vec3::splat(0.35)).x) / 2.5).clamp(0.001, 1.0);
                 col = (col.xyz()
                     * den
-                    * (Vec3::new(0.005, 0.045, 0.075) + 1.5 * Vec3::new(0.033, 0.07, 0.03) * dif))
+                    * (vec3(0.005, 0.045, 0.075) + 1.5 * vec3(0.033, 0.07, 0.03) * dif))
                     .extend(col.w);
             }
 
             let fog_c = (t * 0.2 - 2.2).exp();
-            col += Vec4::new(0.06, 0.11, 0.11, 0.1) * (fog_c - fog_t).clamp(0.0, 1.0);
+            col += vec4(0.06, 0.11, 0.11, 0.1) * (fog_c - fog_t).clamp(0.0, 1.0);
             fog_t = fog_c;
             rez = rez + col * (1.0 - rez.w);
             t += (0.5 - dn * dn * 0.05).clamp(0.09, 0.3);
@@ -177,9 +179,9 @@ fn getsat(c: Vec3) -> f32 {
 
 //from my "Will it blend" shader (https://www.shadertoy.com/view/lsdGzN)
 fn i_lerp(a: Vec3, b: Vec3, x: f32) -> Vec3 {
-    let mut ic: Vec3 = mix(a, b, x) + Vec3::new(1e-6, 0.0, 0.0);
+    let mut ic: Vec3 = mix(a, b, x) + vec3(1e-6, 0.0, 0.0);
     let sd: f32 = (getsat(ic) - mix(getsat(a), getsat(b), x)).abs();
-    let dir: Vec3 = Vec3::new(
+    let dir: Vec3 = vec3(
         2.0 * ic.x - ic.y - ic.z,
         2.0 * ic.y - ic.x - ic.z,
         2.0 * ic.z - ic.y - ic.x,
@@ -199,9 +201,9 @@ impl State {
             (self.inputs.mouse.xy() - 0.5 * self.inputs.resolution.xy()) / self.inputs.resolution.y;
 
         let time: f32 = self.inputs.time * 3.;
-        let mut ro: Vec3 = Vec3::new(0.0, 0.0, time);
+        let mut ro: Vec3 = vec3(0.0, 0.0, time);
 
-        ro += Vec3::new(
+        ro += vec3(
             self.inputs.time.sin() * 0.5,
             (self.inputs.time.sin() * 1.0) * 0.0,
             0.0,
@@ -214,7 +216,7 @@ impl State {
         let target: Vec3 =
             (ro - (disp(time + tgt_dst) * dsp_amp).extend(time + tgt_dst)).normalize();
         ro.x -= self.bs_mo.x * 2.;
-        let mut rightdir: Vec3 = target.cross(Vec3::new(0.0, 1.0, 0.0)).normalize();
+        let mut rightdir: Vec3 = target.cross(vec3(0.0, 1.0, 0.0)).normalize();
         let updir: Vec3 = rightdir.cross(target).normalize();
         rightdir = updir.cross(target).normalize();
         let mut rd: Vec3 = ((p.x * rightdir + p.y * updir) * 1.0 - target).normalize();
@@ -225,7 +227,7 @@ impl State {
         let mut col: Vec3 = scn.xyz();
         col = i_lerp(col.zyx(), col, (1.0 - self.prm1).clamp(0.05, 1.0));
 
-        col = col.powf_vec(Vec3::new(0.55, 0.65, 0.6)) * Vec3::new(1.0, 0.97, 0.9);
+        col = col.powf_vec(vec3(0.55, 0.65, 0.6)) * vec3(1.0, 0.97, 0.9);
 
         col *= (16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y)).powf(0.12) * 0.7 + 0.3; //Vign
 

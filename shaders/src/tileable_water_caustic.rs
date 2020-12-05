@@ -11,7 +11,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -47,12 +47,12 @@ impl Inputs {
         let mut n = 0;
         while n < MAX_ITER {
             let t: f32 = time * (1.1 - (3.5 / (n + 1) as f32));
-            i = p + Vec2::new(
+            i = p + vec2(
                 (t - i.x).cos() + (t + i.y).sin(),
                 (t - i.y).sin() + (t + i.x).cos(),
             );
             c += 1.0
-                / Vec2::new(
+                / vec2(
                     p.x / ((i.x + t).sin() / inten),
                     p.y / ((i.y + t).cos() / inten),
                 )
@@ -62,7 +62,7 @@ impl Inputs {
         c /= MAX_ITER as f32;
         c = 1.17 - c.powf(1.4);
         let mut colour: Vec3 = Vec3::splat(c.abs().powf(8.0));
-        colour = (colour + Vec3::new(0.0, 0.35, 0.5)).clamp(Vec3::zero(), Vec3::one());
+        colour = (colour + vec3(0.0, 0.35, 0.5)).clamp(Vec3::zero(), Vec3::one());
 
         if SHOW_TILING {
             let pixel: Vec2 = 2.0 / self.resolution.xy();
@@ -73,7 +73,7 @@ impl Inputs {
             uv = uv.gl_fract().step(pixel); // Add one line of pixels per tile.
             colour = mix(
                 colour,
-                Vec3::new(1.0, 1.0, 0.0),
+                vec3(1.0, 1.0, 0.0),
                 (uv.x + uv.y) * first.x * first.y,
             ); // Yellow line
         }
