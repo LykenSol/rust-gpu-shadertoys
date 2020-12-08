@@ -11,6 +11,7 @@ pub mod a_lot_of_spheres;
 pub mod a_question_of_time;
 pub mod apollonian;
 pub mod clouds;
+pub mod galaxy_of_universes;
 pub mod heart;
 pub mod mandelbrot_smooth;
 pub mod phantom_star;
@@ -48,7 +49,7 @@ impl Channel for RgbCube {
 
 pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
     const COLS: usize = 4;
-    const ROWS: usize = 3;
+    const ROWS: usize = 4;
 
     let resolution = Vec3::new(
         constants.width as f32 / COLS as f32,
@@ -105,6 +106,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             mouse,
         }
         .main_image(&mut color, frag_coord),
+        12 => galaxy_of_universes::Inputs { resolution, time }.main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
