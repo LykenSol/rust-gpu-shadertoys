@@ -4,7 +4,7 @@
 #![register_attr(spirv)]
 
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec4};
 use spirv_std::storage_class::{Input, Output, PushConstant};
 
 pub mod a_lot_of_spheres;
@@ -58,7 +58,17 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         0.0,
     );
     let time = constants.time;
-    let mouse = Vec4::zero();
+    let mouse = vec4(
+        constants.last_lmb_down_x / COLS as f32,
+        constants.last_lmb_down_y / ROWS as f32,
+        constants.last_click_x / COLS as f32
+            * if constants.mouse_left_pressed {
+                1.0
+            } else {
+                -1.0
+            },
+        constants.last_click_y / ROWS as f32 * if constants.mouse_clicked { 1.0 } else { -1.0 },
+    );
 
     let col = (frag_coord.x / resolution.x) as usize;
     let row = (frag_coord.y / resolution.y) as usize;
