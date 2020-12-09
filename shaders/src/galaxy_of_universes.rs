@@ -25,7 +25,8 @@ pub struct Inputs {
 impl Inputs {
     pub fn main_image(&self, frag_color: &mut Vec4, frag_coord: Vec2) {
         let uv: Vec2 = (frag_coord / self.resolution.xy()) - Vec2::splat(0.5);
-        let t: f32 = self.time * 0.1 + (0.25 + 0.05 * (self.time * 0.1).sin());
+        let t: f32 = self.time * 0.1
+            + ((0.25 + 0.05 * (self.time * 0.1).sin()) / (uv.length() + 0.07)) * 2.2;
         let si: f32 = t.sin();
         let co: f32 = t.cos();
         let ma: Mat2 = Mat2::from_cols_array(&[co, si, -si, co]);
