@@ -10,6 +10,7 @@ use spirv_std::storage_class::{Input, Output, PushConstant};
 pub mod a_lot_of_spheres;
 pub mod a_question_of_time;
 pub mod apollonian;
+pub mod atmosphere_system_test;
 pub mod clouds;
 pub mod galaxy_of_universes;
 pub mod heart;
@@ -107,6 +108,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         }
         .main_image(&mut color, frag_coord),
         12 => galaxy_of_universes::Inputs { resolution, time }.main_image(&mut color, frag_coord),
+        13 => atmosphere_system_test::State::new(atmosphere_system_test::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
+        .main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
