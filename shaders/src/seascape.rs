@@ -10,7 +10,9 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{const_mat2, const_vec3, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{
+    const_mat2, const_vec3, vec2, vec3, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4,
+};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -52,17 +54,17 @@ const OCTAVE_M: Mat2 = const_mat2!([1.6, 1.2, -1.2, 1.6]);
 
 // math
 fn from_euler(ang: Vec3) -> Mat3 {
-    let a1: Vec2 = Vec2::new(ang.x.sin(), ang.x.cos());
-    let a2: Vec2 = Vec2::new(ang.y.sin(), ang.y.cos());
-    let a3: Vec2 = Vec2::new(ang.z.sin(), ang.z.cos());
+    let a1: Vec2 = vec2(ang.x.sin(), ang.x.cos());
+    let a2: Vec2 = vec2(ang.y.sin(), ang.y.cos());
+    let a3: Vec2 = vec2(ang.z.sin(), ang.z.cos());
     Mat3::from_cols(
-        Vec3::new(
+        vec3(
             a1.y * a3.y + a1.x * a2.x * a3.x,
             a1.y * a2.x * a3.x + a3.y * a1.x,
             -a2.y * a3.x,
         ),
-        Vec3::new(-a2.y * a1.x, a1.y * a2.y, a2.x),
-        Vec3::new(
+        vec3(-a2.y * a1.x, a1.y * a2.y, a2.x),
+        vec3(
             a3.y * a1.x * a2.x + a1.y * a3.x,
             a1.x * a3.x - a1.y * a3.y * a2.x,
             a2.y * a3.y,
@@ -70,7 +72,7 @@ fn from_euler(ang: Vec3) -> Mat3 {
     )
 }
 fn hash(p: Vec2) -> f32 {
-    let h: f32 = p.dot(Vec2::new(127.1, 311.7));
+    let h: f32 = p.dot(vec2(127.1, 311.7));
     (h.sin() * 43758.5453123).gl_fract()
 }
 fn noise(p: Vec2) -> f32 {
@@ -79,16 +81,8 @@ fn noise(p: Vec2) -> f32 {
     let u: Vec2 = f * f * (Vec2::splat(3.0) - 2.0 * f);
     -1.0 + 2.0
         * mix(
-            mix(
-                hash(i + Vec2::new(0.0, 0.0)),
-                hash(i + Vec2::new(1.0, 0.0)),
-                u.x,
-            ),
-            mix(
-                hash(i + Vec2::new(0.0, 1.0)),
-                hash(i + Vec2::new(1.0, 1.0)),
-                u.x,
-            ),
+            mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+            mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x),
             u.y,
         )
 }
@@ -105,7 +99,7 @@ fn specular(n: Vec3, l: Vec3, e: Vec3, s: f32) -> f32 {
 // sky
 fn get_sky_color(mut e: Vec3) -> Vec3 {
     e.y = (e.y.max(0.0) * 0.8 + 0.2) * 0.8;
-    Vec3::new((1.0 - e.y).powf(2.0), 1.0 - e.y, 0.6 + (1.0 - e.y) * 0.4) * 1.1
+    vec3((1.0 - e.y).powf(2.0), 1.0 - e.y, 0.6 + (1.0 - e.y) * 0.4) * 1.1
 }
 
 // sea
@@ -187,8 +181,8 @@ impl Inputs {
     fn get_normal(&self, p: Vec3, eps: f32) -> Vec3 {
         let mut n: Vec3 = Vec3::zero();
         n.y = self.map_detailed(p);
-        n.x = self.map_detailed(Vec3::new(p.x + eps, p.y, p.z)) - n.y;
-        n.z = self.map_detailed(Vec3::new(p.x, p.y, p.z + eps)) - n.y;
+        n.x = self.map_detailed(vec3(p.x + eps, p.y, p.z)) - n.y;
+        n.z = self.map_detailed(vec3(p.x, p.y, p.z + eps)) - n.y;
         n.y = eps;
         n.normalize()
     }
@@ -224,8 +218,8 @@ impl Inputs {
         uv = uv * 2.0 - Vec2::one();
         uv.x *= self.resolution.x / self.resolution.y;
         // ray
-        let ang: Vec3 = Vec3::new((time * 3.0).sin() * 0.1, time.sin() * 0.2 + 0.3, time);
-        let ori: Vec3 = Vec3::new(0.0, 3.5, time * 5.0);
+        let ang: Vec3 = vec3((time * 3.0).sin() * 0.1, time.sin() * 0.2 + 0.3, time);
+        let ori: Vec3 = vec3(0.0, 3.5, time * 5.0);
         let mut dir: Vec3 = uv.extend(-2.0).normalize();
         dir.z += uv.length() * 0.14;
         dir = from_euler(ang).transpose() * dir.normalize();
@@ -234,7 +228,7 @@ impl Inputs {
         self.height_map_tracing(ori, dir, &mut p);
         let dist: Vec3 = p - ori;
         let n: Vec3 = self.get_normal(p, dist.dot(dist) * self.epsilon_nrm());
-        let light: Vec3 = Vec3::new(0.0, 1.0, 0.8).normalize();
+        let light: Vec3 = vec3(0.0, 1.0, 0.8).normalize();
         // color
         mix(
             get_sky_color(dir),
@@ -253,7 +247,7 @@ impl Inputs {
             while i <= 1 {
                 let mut j = -1;
                 while j <= 1 {
-                    let uv: Vec2 = frag_coord + Vec2::new(i as f32, j as f32) / 3.0;
+                    let uv: Vec2 = frag_coord + vec2(i as f32, j as f32) / 3.0;
                     color += self.get_pixel(uv, time);
                     j += 1;
                 }

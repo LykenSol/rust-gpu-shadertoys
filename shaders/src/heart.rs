@@ -7,7 +7,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -25,13 +25,13 @@ impl Inputs {
             (2.0 * frag_coord - self.resolution.xy()) / (self.resolution.y.min(self.resolution.x));
 
         // background color
-        let bcol: Vec3 = Vec3::new(1.0, 0.8, 0.7 - 0.07 * p.y) * (1.0 - 0.25 * p.length());
+        let bcol: Vec3 = vec3(1.0, 0.8, 0.7 - 0.07 * p.y) * (1.0 - 0.25 * p.length());
 
         // animate
         let tt: f32 = self.time.rem_euclid(1.5) / 1.5;
         let mut ss: f32 = tt.powf(0.2) * 0.5 + 0.5;
         ss = 1.0 + ss * 0.5 * (tt * 6.2831 * 3.0 + p.y * 0.5).sin() * (-tt * 4.0).exp();
-        p *= Vec2::new(0.5, 1.5) + ss * Vec2::new(0.5, -0.5);
+        p *= vec2(0.5, 1.5) + ss * vec2(0.5, -0.5);
 
         // shape
         let r: f32;
@@ -55,7 +55,7 @@ impl Inputs {
         s *= 1.0 - 0.4 * r;
         s = 0.3 + 0.7 * s;
         s *= 0.5 + 0.5 * (1.0 - (r / d).clamp(0.0, 1.0)).powf(0.1);
-        let hcol: Vec3 = Vec3::new(1.0, 0.5 * r, 0.3) * s;
+        let hcol: Vec3 = vec3(1.0, 0.5 * r, 0.3) * s;
 
         let col: Vec3 = mix(bcol, hcol, smoothstep(-0.01, 0.01, d - r));
 

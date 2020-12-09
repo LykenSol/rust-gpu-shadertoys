@@ -6,7 +6,7 @@
 //! // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 //! ```
 
-use spirv_std::glam::{Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec3, Vec2, Vec3, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -21,7 +21,7 @@ pub struct Inputs {
 impl Inputs {
     fn f(&self, mut p: Vec3) -> f32 {
         p.z += self.time;
-        (Vec3::splat(0.05 * (9. * p.y * p.x).cos()) + Vec3::new(p.x.cos(), p.y.cos(), p.z.cos())
+        (Vec3::splat(0.05 * (9. * p.y * p.x).cos()) + vec3(p.x.cos(), p.y.cos(), p.z.cos())
             - Vec3::splat(0.1 * (9. * (p.z + 0.3 * p.x - p.y)).cos()))
         .length()
             - 1.
@@ -35,8 +35,8 @@ impl Inputs {
             o += self.f(o) * d;
             i += 1;
         }
-        *c = ((self.f(o - d) * Vec3::new(0.0, 1.0, 2.0)
-            + Vec3::splat(self.f(o - Vec3::splat(0.6))) * Vec3::new(2.0, 1.0, 0.0))
+        *c = ((self.f(o - d) * vec3(0.0, 1.0, 2.0)
+            + Vec3::splat(self.f(o - Vec3::splat(0.6))) * vec3(2.0, 1.0, 0.0))
         .abs()
             * (1. - 0.1 * o.z))
             .extend(1.0);

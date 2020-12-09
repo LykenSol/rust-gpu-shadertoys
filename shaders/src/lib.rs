@@ -4,7 +4,7 @@
 #![register_attr(spirv)]
 
 use shared::*;
-use spirv_std::glam::{Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec4};
 use spirv_std::storage_class::{Input, Output, PushConstant};
 
 pub mod a_lot_of_spheres;
@@ -51,7 +51,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
     const COLS: usize = 4;
     const ROWS: usize = 4;
 
-    let resolution = Vec3::new(
+    let resolution = vec3(
         constants.width as f32 / COLS as f32,
         constants.height as f32 / ROWS as f32,
         0.0,
@@ -121,7 +121,7 @@ pub fn main_fs(
 ) {
     let constants = constants.load();
 
-    let frag_coord = Vec2::new(in_frag_coord.load().x, in_frag_coord.load().y);
+    let frag_coord = vec2(in_frag_coord.load().x, in_frag_coord.load().y);
     let color = fs(&constants, frag_coord);
     output.store(color);
 }
@@ -136,7 +136,7 @@ pub fn main_vs(
 
     // Create a "full screen triangle" by mapping the vertex index.
     // ported from https://www.saschawillems.de/blog/2016/08/13/vulkan-tutorial-on-rendering-a-fullscreen-quad-without-buffers/
-    let uv = Vec2::new(((vert_idx << 1) & 2) as f32, (vert_idx & 2) as f32);
+    let uv = vec2(((vert_idx << 1) & 2) as f32, (vert_idx & 2) as f32);
     let pos = 2.0 * uv - Vec2::one();
 
     builtin_pos.store(pos.extend(0.0).extend(1.0));

@@ -11,7 +11,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -44,7 +44,7 @@ impl Inputs {
         let mut z: Vec2 = Vec2::zero();
         let mut i = 0;
         while i < 512 {
-            z = Vec2::new(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+            z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
             if z.dot(z) > (B * B) {
                 break;
             }
@@ -74,7 +74,7 @@ impl Inputs {
             let mut n = 0;
             while n < AA {
                 let p: Vec2 = (-self.resolution.xy()
-                    + Vec2::splat(2.0) * (frag_coord + Vec2::new(m as f32, n as f32) / AA as f32))
+                    + Vec2::splat(2.0) * (frag_coord + vec2(m as f32, n as f32) / AA as f32))
                     / self.resolution.y;
                 let w: f32 = (AA * m + n) as f32;
                 let time: f32 = self.time + 0.5 * (1.0 / 24.0) * w / (AA * AA) as f32;
@@ -83,13 +83,12 @@ impl Inputs {
                 let coa: f32 = (0.15 * (1.0 - zoo) * time).cos();
                 let sia = (0.15 * (1.0 - zoo) * time).sin();
                 zoo = zoo.powf(8.0);
-                let xy: Vec2 = Vec2::new(p.x * coa - p.y * sia, p.x * sia + p.y * coa);
-                let c: Vec2 = Vec2::new(-0.745, 0.186) + xy * zoo;
+                let xy: Vec2 = vec2(p.x * coa - p.y * sia, p.x * sia + p.y * coa);
+                let c: Vec2 = vec2(-0.745, 0.186) + xy * zoo;
 
                 let l: f32 = self.mandelbrot(c);
                 col += Vec3::splat(0.5)
-                    + Vec3::splat(0.5)
-                        * (Vec3::splat(3.0 + l * 0.15) + Vec3::new(0.0, 0.6, 1.0)).cos();
+                    + Vec3::splat(0.5) * (Vec3::splat(3.0 + l * 0.15) + vec3(0.0, 0.6, 1.0)).cos();
                 n += 1;
             }
             m += 1;

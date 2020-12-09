@@ -1,6 +1,6 @@
 //! Ported to Rust from <https://www.shadertoy.com/view/ttKGDt>
 
-use spirv_std::glam::{Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 use core::f32::consts::PI;
 
@@ -48,7 +48,7 @@ impl Inputs {
             i += 1;
         }
         p = (rot(self.time).transpose() * p.xz()).extend(p.y).xzy();
-        box_(p, Vec3::new(0.4, 0.8, 0.3))
+        box_(p, vec3(0.4, 0.8, 0.3))
     }
 
     fn map(&self, p: Vec3, _c_pos: Vec3) -> f32 {
@@ -64,10 +64,10 @@ impl Inputs {
         let p: Vec2 =
             (frag_coord * 2.0 - self.resolution.xy()) / self.resolution.x.min(self.resolution.y);
 
-        let c_pos: Vec3 = Vec3::new(0.0, 0.0, -3.0 * self.time);
-        // let c_pos: Vec3 = Vec3::new(0.3 * (self.time * 0.8).sin(), 0.4 * (self.time * 0.3).cos(), -6.0 * self.time,);
-        let c_dir: Vec3 = Vec3::new(0.0, 0.0, -1.0).normalize();
-        let c_up: Vec3 = Vec3::new(self.time.sin(), 1.0, 0.0);
+        let c_pos: Vec3 = vec3(0.0, 0.0, -3.0 * self.time);
+        // let c_pos: Vec3 = vec3(0.3 * (self.time * 0.8).sin(), 0.4 * (self.time * 0.3).cos(), -6.0 * self.time,);
+        let c_dir: Vec3 = vec3(0.0, 0.0, -1.0).normalize();
+        let c_up: Vec3 = vec3(self.time.sin(), 1.0, 0.0);
         let c_side: Vec3 = c_dir.cross(c_up);
 
         let ray: Vec3 = (c_side * p.x + c_up * p.y + c_dir).normalize();
@@ -92,7 +92,7 @@ impl Inputs {
             i += 1;
         }
 
-        let col: Vec3 = Vec3::new(
+        let col: Vec3 = vec3(
             acc * 0.01,
             acc * 0.011 + acc2 * 0.002,
             acc * 0.012 + acc2 * 0.005,
