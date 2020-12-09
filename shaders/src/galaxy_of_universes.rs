@@ -10,7 +10,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use spirv_std::glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -40,7 +40,7 @@ impl Inputs {
         while i < 90 {
             let mut p: Vec3 = s * uv.extend(0.0);
             p = (ma.transpose() * p.xy()).extend(p.z);
-            p += Vec3::new(0.22, 0.3, s - 1.5 - (self.time * 0.13).sin() * 0.1);
+            p += vec3(0.22, 0.3, s - 1.5 - (self.time * 0.13).sin() * 0.1);
             {
                 let mut i = 0;
                 while i < 8 {
@@ -60,7 +60,7 @@ impl Inputs {
         v2 *= smoothstep(0.5, 0.0, len);
         v3 *= smoothstep(0.9, 0.0, len);
 
-        let col: Vec3 = Vec3::new(
+        let col: Vec3 = vec3(
             v3 * (1.5 + (self.time * 0.2).sin() * 0.4),
             (v1 + v3) * 0.3,
             v2,
