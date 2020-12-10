@@ -19,6 +19,7 @@ pub mod phantom_star;
 pub mod playing_marble;
 pub mod protean_clouds;
 pub mod seascape;
+pub mod soft_shadow_variation;
 pub mod tileable_water_caustic;
 pub mod two_tweets;
 
@@ -124,6 +125,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             mouse,
         })
         .main_image(&mut color, frag_coord),
+        14 => soft_shadow_variation::Inputs { resolution, time }.main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
