@@ -7,7 +7,7 @@
 
 use core::f32::consts::PI;
 use core::ops::{Add, Mul, Sub};
-use spirv_std::glam::{Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -34,11 +34,11 @@ pub fn saturate(x: f32) -> f32 {
 }
 
 pub fn pow(v: Vec3, power: f32) -> Vec3 {
-    Vec3::new(v.x.powf(power), v.y.powf(power), v.z.powf(power))
+    vec3(v.x.powf(power), v.y.powf(power), v.z.powf(power))
 }
 
 pub fn exp(v: Vec3) -> Vec3 {
-    Vec3::new(v.x.exp(), v.y.exp(), v.z.exp())
+    vec3(v.x.exp(), v.y.exp(), v.z.exp())
 }
 
 /// Based on: https://seblagarde.wordpress.com/2014/12/01/inverse-trigonometric-functions-gpu-optimization-for-amd-gcn-architecture/
@@ -151,35 +151,35 @@ fn step(edge: f32, x: f32) -> f32 {
 
 impl VecExt for Vec2 {
     fn gl_fract(self) -> Vec2 {
-        Vec2::new(self.x.gl_fract(), self.y.gl_fract())
+        vec2(self.x.gl_fract(), self.y.gl_fract())
     }
 
     fn sin(self) -> Vec2 {
-        Vec2::new(self.x.sin(), self.y.sin())
+        vec2(self.x.sin(), self.y.sin())
     }
 
     fn cos(self) -> Vec2 {
-        Vec2::new(self.x.cos(), self.y.cos())
+        vec2(self.x.cos(), self.y.cos())
     }
 
     fn powf_vec(self, p: Vec2) -> Vec2 {
-        Vec2::new(self.x.powf(p.x), self.y.powf(p.y))
+        vec2(self.x.powf(p.x), self.y.powf(p.y))
     }
 
     fn sqrt(self) -> Vec2 {
-        Vec2::new(self.x.sqrt(), self.y.sqrt())
+        vec2(self.x.sqrt(), self.y.sqrt())
     }
 
     fn ln(self) -> Vec2 {
-        Vec2::new(self.x.ln(), self.y.ln())
+        vec2(self.x.ln(), self.y.ln())
     }
 
     fn rem_euclid(self, m: f32) -> Vec2 {
-        Vec2::new(self.x.rem_euclid(m), self.y.rem_euclid(m))
+        vec2(self.x.rem_euclid(m), self.y.rem_euclid(m))
     }
 
     fn step(self, other: Vec2) -> Vec2 {
-        Vec2::new(step(self.x, other.x), step(self.y, other.y))
+        vec2(step(self.x, other.x), step(self.y, other.y))
     }
 
     fn reflect(self, normal: Vec2) -> Vec2 {
@@ -191,37 +191,37 @@ impl VecExt for Vec2 {
     }
 
     fn gl_sign(self) -> Vec2 {
-        Vec2::new(self.x.gl_sign(), self.y.gl_sign())
+        vec2(self.x.gl_sign(), self.y.gl_sign())
     }
 }
 
 impl VecExt for Vec3 {
     fn gl_fract(self) -> Vec3 {
-        Vec3::new(self.x.gl_fract(), self.y.gl_fract(), self.z.gl_fract())
+        vec3(self.x.gl_fract(), self.y.gl_fract(), self.z.gl_fract())
     }
 
     fn sin(self) -> Vec3 {
-        Vec3::new(self.x.sin(), self.y.sin(), self.z.sin())
+        vec3(self.x.sin(), self.y.sin(), self.z.sin())
     }
 
     fn cos(self) -> Vec3 {
-        Vec3::new(self.x.cos(), self.y.cos(), self.z.cos())
+        vec3(self.x.cos(), self.y.cos(), self.z.cos())
     }
 
     fn powf_vec(self, p: Vec3) -> Vec3 {
-        Vec3::new(self.x.powf(p.x), self.y.powf(p.y), self.z.powf(p.z))
+        vec3(self.x.powf(p.x), self.y.powf(p.y), self.z.powf(p.z))
     }
 
     fn sqrt(self) -> Vec3 {
-        Vec3::new(self.x.sqrt(), self.y.sqrt(), self.z.sqrt())
+        vec3(self.x.sqrt(), self.y.sqrt(), self.z.sqrt())
     }
 
     fn ln(self) -> Vec3 {
-        Vec3::new(self.x.ln(), self.y.ln(), self.z.ln())
+        vec3(self.x.ln(), self.y.ln(), self.z.ln())
     }
 
     fn rem_euclid(self, m: f32) -> Vec3 {
-        Vec3::new(
+        vec3(
             self.x.rem_euclid(m),
             self.y.rem_euclid(m),
             self.z.rem_euclid(m),
@@ -229,7 +229,7 @@ impl VecExt for Vec3 {
     }
 
     fn step(self, other: Vec3) -> Vec3 {
-        Vec3::new(
+        vec3(
             step(self.x, other.x),
             step(self.y, other.y),
             step(self.z, other.z),
@@ -245,6 +245,6 @@ impl VecExt for Vec3 {
     }
 
     fn gl_sign(self) -> Vec3 {
-        Vec3::new(self.x.gl_sign(), self.y.gl_sign(), self.z.gl_sign())
+        vec3(self.x.gl_sign(), self.y.gl_sign(), self.z.gl_sign())
     }
 }
