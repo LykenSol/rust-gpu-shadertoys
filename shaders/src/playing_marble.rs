@@ -8,7 +8,7 @@
 
 use crate::Channel;
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
+use spirv_std::glam::{vec2, vec3, vec4, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -110,7 +110,7 @@ impl<C0: Channel> Inputs<C0> {
         let vv: Vec3 = (uu.cross(ww)).normalize();
         let rd: Vec3 = (p.x * uu + p.y * vv + 4.0 * ww).normalize();
 
-        let tmm: Vec2 = i_sphere(ro, rd, Vec4::new(0.0, 0.0, 0.0, 2.0));
+        let tmm: Vec2 = i_sphere(ro, rd, vec4(0.0, 0.0, 0.0, 2.0));
         // raymarch
         let mut col: Vec3 = self.raymarch(ro, rd, tmm);
         if tmm.x < 0.0 {
