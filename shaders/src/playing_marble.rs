@@ -1,4 +1,4 @@
-//! Ported to Rust from <https://www.shadertoy.com/view/4ds3zn>
+//! Ported to Rust from <https://www.shadertoy.com/view/MtX3Ws>
 //!
 //! Original comment:
 //! ```glsl
