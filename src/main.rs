@@ -101,11 +101,11 @@ async fn run(
         .map(|surface| device.create_swap_chain(&surface, &sc_desc));
 
     let start = std::time::Instant::now();
-    let mut mouse_left_pressed = false;
     let (mut cursor_x, mut cursor_y) = (0.0, 0.0);
-    let (mut last_lmb_down_x, mut last_lmb_down_y) = (0.0, 0.0);
-    let mut mouse_clicked = false;
-    let (mut last_click_x, mut last_click_y) = (0.0, 0.0);
+    let (mut drag_start_x, mut drag_start_y) = (0.0, 0.0);
+    let (mut drag_end_x, mut drag_end_y) = (0.0, 0.0);
+    let mut mouse_left_pressed = false;
+    let mut mouse_left_clicked = false;
 
     event_loop.run(move |event, _, control_flow| {
         // Have the closure take ownership of the resources.
@@ -162,14 +162,16 @@ async fn run(
                             width: window.inner_size().width,
                             height: window.inner_size().height,
                             time: start.elapsed().as_secs_f32(),
-                            last_lmb_down_x,
-                            last_lmb_down_y,
-                            last_click_x,
-                            last_click_y,
+                            cursor_x,
+                            cursor_y,
+                            drag_start_x,
+                            drag_start_y,
+                            drag_end_x,
+                            drag_end_y,
                             mouse_left_pressed,
-                            mouse_clicked,
+                            mouse_left_clicked,
                         };
-                        mouse_clicked = false;
+                        mouse_left_clicked = false;
                         rpass.set_pipeline(&render_pipeline);
                         rpass.set_push_constants(wgpu::ShaderStage::all(), 0, unsafe {
                             any_as_u32_slice(&push_constants)
@@ -207,11 +209,11 @@ async fn run(
             } => {
                 mouse_left_pressed = state == ElementState::Pressed;
                 if mouse_left_pressed {
-                    last_lmb_down_x = cursor_x;
-                    last_lmb_down_y = cursor_y;
-                    last_click_x = cursor_x;
-                    last_click_y = cursor_y;
-                    mouse_clicked = true;
+                    drag_start_x = cursor_x;
+                    drag_start_y = cursor_y;
+                    drag_end_x = cursor_x;
+                    drag_end_y = cursor_y;
+                    mouse_left_clicked = true;
                 }
             }
             Event::WindowEvent {
@@ -221,8 +223,8 @@ async fn run(
                 cursor_x = position.x as f32;
                 cursor_y = position.y as f32;
                 if mouse_left_pressed {
-                    last_lmb_down_x = cursor_x;
-                    last_lmb_down_y = cursor_y;
+                    drag_end_x = cursor_x;
+                    drag_end_y = cursor_y;
                 }
             }
             _ => {}

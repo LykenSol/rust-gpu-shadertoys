@@ -61,15 +61,20 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
     );
     let time = constants.time;
     let mouse = vec4(
-        constants.last_lmb_down_x / COLS as f32,
-        constants.last_lmb_down_y / ROWS as f32,
-        constants.last_click_x / COLS as f32
+        constants.drag_end_x / COLS as f32,
+        constants.drag_end_y / ROWS as f32,
+        constants.drag_start_x / COLS as f32
             * if constants.mouse_left_pressed {
                 1.0
             } else {
                 -1.0
             },
-        constants.last_click_y / ROWS as f32 * if constants.mouse_clicked { 1.0 } else { -1.0 },
+        constants.drag_start_y / ROWS as f32
+            * if constants.mouse_left_clicked {
+                1.0
+            } else {
+                -1.0
+            },
     );
 
     let col = (frag_coord.x / resolution.x) as usize;

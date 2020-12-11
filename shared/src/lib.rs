@@ -21,12 +21,14 @@ pub struct ShaderConstants {
     pub width: u32,
     pub height: u32,
     pub time: f32,
-    pub last_lmb_down_x: f32,
-    pub last_lmb_down_y: f32,
-    pub last_click_x: f32,
-    pub last_click_y: f32,
+    pub cursor_x: f32,
+    pub cursor_y: f32,
+    pub drag_start_x: f32,
+    pub drag_start_y: f32,
+    pub drag_end_x: f32,
+    pub drag_end_y: f32,
     pub mouse_left_pressed: bool,
-    pub mouse_clicked: bool,
+    pub mouse_left_clicked: bool,
 }
 
 pub fn saturate(x: f32) -> f32 {
