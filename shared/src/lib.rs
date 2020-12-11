@@ -7,7 +7,7 @@
 
 use core::f32::consts::PI;
 use core::ops::{Add, Mul, Sub};
-use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -246,5 +246,76 @@ impl VecExt for Vec3 {
 
     fn gl_sign(self) -> Vec3 {
         vec3(self.x.gl_sign(), self.y.gl_sign(), self.z.gl_sign())
+    }
+}
+
+impl VecExt for Vec4 {
+    fn gl_fract(self) -> Vec4 {
+        vec4(
+            self.x.gl_fract(),
+            self.y.gl_fract(),
+            self.z.gl_fract(),
+            self.w.gl_fract(),
+        )
+    }
+
+    fn sin(self) -> Vec4 {
+        vec4(self.x.sin(), self.y.sin(), self.z.sin(), self.w.sin())
+    }
+
+    fn cos(self) -> Vec4 {
+        vec4(self.x.cos(), self.y.cos(), self.z.cos(), self.w.cos())
+    }
+
+    fn powf_vec(self, p: Vec4) -> Vec4 {
+        vec4(
+            self.x.powf(p.x),
+            self.y.powf(p.y),
+            self.z.powf(p.z),
+            self.w.powf(p.w),
+        )
+    }
+
+    fn sqrt(self) -> Vec4 {
+        vec4(self.x.sqrt(), self.y.sqrt(), self.z.sqrt(), self.w.sqrt())
+    }
+
+    fn ln(self) -> Vec4 {
+        vec4(self.x.ln(), self.y.ln(), self.z.ln(), self.w.ln())
+    }
+
+    fn rem_euclid(self, m: f32) -> Vec4 {
+        vec4(
+            self.x.rem_euclid(m),
+            self.y.rem_euclid(m),
+            self.z.rem_euclid(m),
+            self.w.rem_euclid(m),
+        )
+    }
+
+    fn step(self, other: Vec4) -> Vec4 {
+        vec4(
+            step(self.x, other.x),
+            step(self.y, other.y),
+            step(self.z, other.z),
+            step(self.w, other.w),
+        )
+    }
+
+    fn reflect(self, normal: Vec4) -> Vec4 {
+        self - 2.0 * normal.dot(self) * normal
+    }
+
+    fn distance(self, other: Vec4) -> f32 {
+        (self - other).length()
+    }
+
+    fn gl_sign(self) -> Vec4 {
+        vec4(
+            self.x.gl_sign(),
+            self.y.gl_sign(),
+            self.z.gl_sign(),
+            self.w.gl_sign(),
+        )
     }
 }
