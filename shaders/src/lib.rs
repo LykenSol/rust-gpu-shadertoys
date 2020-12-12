@@ -16,6 +16,7 @@ pub mod galaxy_of_universes;
 pub mod heart;
 pub mod mandelbrot_smooth;
 pub mod miracle_snowflakes;
+pub mod morphing;
 pub mod phantom_star;
 pub mod playing_marble;
 pub mod protean_clouds;
@@ -52,7 +53,7 @@ impl Channel for RgbCube {
 
 pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
     const COLS: usize = 4;
-    const ROWS: usize = 4;
+    const ROWS: usize = 5;
 
     let resolution = vec3(
         constants.width as f32 / COLS as f32,
@@ -133,6 +134,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         .main_image(&mut color, frag_coord),
         14 => soft_shadow_variation::Inputs { resolution, time }.main_image(&mut color, frag_coord),
         15 => miracle_snowflakes::State::new(miracle_snowflakes::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
+        .main_image(&mut color, frag_coord),
+        16 => morphing::State::new(morphing::Inputs {
             resolution,
             time,
             mouse,
