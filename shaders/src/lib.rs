@@ -11,6 +11,7 @@ pub mod a_lot_of_spheres;
 pub mod a_question_of_time;
 pub mod apollonian;
 pub mod atmosphere_system_test;
+pub mod bubble_buckey_balls;
 pub mod clouds;
 pub mod galaxy_of_universes;
 pub mod heart;
@@ -43,11 +44,12 @@ impl Channel for ConstantColor {
 #[derive(Copy, Clone)]
 struct RgbCube {
     alpha: f32,
+    intensity: f32,
 }
 
 impl Channel for RgbCube {
     fn sample_cube(self, p: Vec3) -> Vec4 {
-        p.abs().extend(self.alpha)
+        (p.abs() * self.intensity).extend(self.alpha)
     }
 }
 
@@ -115,7 +117,10 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             resolution,
             time,
             mouse,
-            channel0: RgbCube { alpha: 1.0 },
+            channel0: RgbCube {
+                alpha: 1.0,
+                intensity: 1.0,
+            },
         }
         .main_image(&mut color, frag_coord),
         10 => a_lot_of_spheres::Inputs { resolution, time }.main_image(&mut color, frag_coord),
@@ -143,6 +148,17 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             resolution,
             time,
             mouse,
+        })
+        .main_image(&mut color, frag_coord),
+        17 => bubble_buckey_balls::State::new(bubble_buckey_balls::Inputs {
+            resolution,
+            time,
+            mouse,
+            channel0: RgbCube {
+                alpha: 1.0,
+                intensity: 0.5,
+            },
+            channel1: ConstantColor { color: Vec4::one() },
         })
         .main_image(&mut color, frag_coord),
         _ => {}
