@@ -21,6 +21,7 @@ pub mod morphing;
 pub mod phantom_star;
 pub mod playing_marble;
 pub mod protean_clouds;
+pub mod raymarching_primitives;
 pub mod seascape;
 pub mod soft_shadow_variation;
 pub mod tileable_water_caustic;
@@ -160,6 +161,13 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             },
             channel1: ConstantColor { color: Vec4::one() },
         })
+        .main_image(&mut color, frag_coord),
+        18 => raymarching_primitives::Inputs {
+            resolution,
+            frame: (time * 60.0) as i32,
+            time,
+            mouse,
+        }
         .main_image(&mut color, frag_coord),
         _ => {}
     }
