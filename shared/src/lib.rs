@@ -4,10 +4,11 @@
 #![feature(lang_items)]
 #![feature(register_attr)]
 #![register_attr(spirv)]
+#![feature(asm)]
 
 use core::f32::consts::PI;
 use core::ops::{Add, Mul, Sub};
-use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec4};
+use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec3A, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -325,5 +326,109 @@ impl VecExt for Vec4 {
             self.z.gl_sign(),
             self.w.gl_sign(),
         )
+    }
+}
+
+pub trait Derivative {
+    fn ddx(self) -> Self;
+    fn ddx_fine(self) -> Self;
+    fn ddx_coarse(self) -> Self;
+    fn ddy(self) -> Self;
+    fn ddy_fine(self) -> Self;
+    fn ddy_coarse(self) -> Self;
+    fn fwidth(self) -> Self;
+    fn fwidth_fine(self) -> Self;
+    fn fwidth_coarse(self) -> Self;
+}
+
+#[cfg(target_arch = "spirv")]
+macro_rules! deriv_caps {
+    (true) => {
+        asm!("OpCapability DerivativeControl")
+    };
+    (false) => {};
+}
+
+macro_rules! deriv_fn {
+    ($name:ident, $inst:ident, $needs_caps:tt) => {
+        fn $name(self) -> Self {
+            #[cfg(not(target_arch = "spirv"))]
+            panic!(concat!(stringify!($name), " is not supported on the CPU"));
+            #[cfg(target_arch = "spirv")]
+            unsafe {
+                let mut result = Default::default();
+                deriv_caps!($needs_caps);
+                asm!(
+                    "%input = OpLoad typeof*{1} {1}",
+                    concat!("%result = ", stringify!($inst), " typeof*{1} %input"),
+                    "OpStore {0} %result",
+                    in(reg) &mut result,
+                    in(reg) &self,
+                );
+                result
+            }
+        }
+    };
+}
+macro_rules! deriv_impl {
+    ($ty:ty) => {
+        impl Derivative for $ty {
+            deriv_fn!(ddx, OpDPdx, false);
+            deriv_fn!(ddx_fine, OpDPdxFine, true);
+            deriv_fn!(ddx_coarse, OpDPdxCoarse, true);
+            deriv_fn!(ddy, OpDPdy, false);
+            deriv_fn!(ddy_fine, OpDPdyFine, true);
+            deriv_fn!(ddy_coarse, OpDPdyCoarse, true);
+            deriv_fn!(fwidth, OpFwidth, false);
+            deriv_fn!(fwidth_fine, OpFwidthFine, true);
+            deriv_fn!(fwidth_coarse, OpFwidthCoarse, true);
+        }
+    };
+}
+
+// "must be a scalar or vector of floating-point type. The component width must be 32 bits."
+deriv_impl!(f32);
+deriv_impl!(Vec2);
+deriv_impl!(Vec3A);
+deriv_impl!(Vec4);
+
+impl Derivative for Vec3 {
+    fn ddx(self) -> Self {
+        Vec3A::from(self).ddx().into()
+    }
+    fn ddx_fine(self) -> Self {
+        Vec3A::from(self).ddx_fine().into()
+    }
+    fn ddx_coarse(self) -> Self {
+        Vec3A::from(self).ddx_coarse().into()
+    }
+    fn ddy(self) -> Self {
+        Vec3A::from(self).ddy().into()
+    }
+    fn ddy_fine(self) -> Self {
+        Vec3A::from(self).ddy_fine().into()
+    }
+    fn ddy_coarse(self) -> Self {
+        Vec3A::from(self).ddy_coarse().into()
+    }
+    fn fwidth(self) -> Self {
+        Vec3A::from(self).fwidth().into()
+    }
+    fn fwidth_fine(self) -> Self {
+        Vec3A::from(self).fwidth_fine().into()
+    }
+    fn fwidth_coarse(self) -> Self {
+        Vec3A::from(self).fwidth_coarse().into()
+    }
+}
+
+pub fn discard() {
+    #[cfg(target_arch = "spirv")]
+    unsafe {
+        asm!(
+            "OpExtension \"SPV_EXT_demote_to_helper_invocation\"",
+            "OpCapability DemoteToHelperInvocationEXT",
+            "OpDemoteToHelperInvocationEXT"
+        );
     }
 }
