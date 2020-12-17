@@ -18,6 +18,7 @@ pub mod heart;
 pub mod mandelbrot_smooth;
 pub mod miracle_snowflakes;
 pub mod morphing;
+pub mod moving_square;
 pub mod phantom_star;
 pub mod playing_marble;
 pub mod protean_clouds;
@@ -169,6 +170,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             mouse,
         }
         .main_image(&mut color, frag_coord),
+        19 => moving_square::Inputs { resolution, time }.main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)

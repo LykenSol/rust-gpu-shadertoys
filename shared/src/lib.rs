@@ -81,6 +81,12 @@ impl Clamp for f32 {
     }
 }
 
+impl Clamp for Vec2 {
+    fn clamp(self, min: Self, max: Self) -> Self {
+        self.max(min).min(max)
+    }
+}
+
 impl Clamp for Vec3 {
     fn clamp(self, min: Self, max: Self) -> Self {
         self.max(min).min(max)
