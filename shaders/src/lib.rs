@@ -24,6 +24,7 @@ pub mod playing_marble;
 pub mod protean_clouds;
 pub mod raymarching_primitives;
 pub mod seascape;
+pub mod skyline;
 pub mod soft_shadow_variation;
 pub mod tileable_water_caustic;
 pub mod two_tweets;
@@ -56,7 +57,7 @@ impl Channel for RgbCube {
 }
 
 pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
-    const COLS: usize = 4;
+    const COLS: usize = 5;
     const ROWS: usize = 5;
 
     let resolution = vec3(
@@ -171,6 +172,16 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         }
         .main_image(&mut color, frag_coord),
         19 => moving_square::Inputs { resolution, time }.main_image(&mut color, frag_coord),
+        20 => skyline::State::new(skyline::Inputs {
+            resolution,
+            time,
+            mouse,
+            channel0: RgbCube {
+                alpha: 1.0,
+                intensity: 1.0,
+            },
+        })
+        .main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
