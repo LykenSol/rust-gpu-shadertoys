@@ -8,7 +8,7 @@
 //! // Tested on Nvidia GTX 780 Windows 7
 //! ```
 
-use crate::Channel;
+use crate::SampleCube;
 use shared::*;
 use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
@@ -428,7 +428,7 @@ fn material(surfid: f32, surf: &mut SurfaceData) {
     }
 }
 
-impl<C0: Channel, C1: Channel> State<C0, C1> {
+impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
     fn integrate_dir_light(&self, ldir: Vec3, lcolor: Vec3, surf: SurfaceData) -> Vec3 {
         let vdir: Vec3 = (self.cam_origin - surf.point).normalize();
 

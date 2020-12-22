@@ -6,7 +6,7 @@
 //! // Created by S. Guillitte 2015
 //! ```
 
-use crate::Channel;
+use crate::SampleCube;
 use shared::*;
 use spirv_std::glam::{vec2, vec3, vec4, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
@@ -62,7 +62,7 @@ fn map(mut p: Vec3) -> f32 {
     res / 2.0
 }
 
-impl<C0: Channel> Inputs<C0> {
+impl<C0: SampleCube> Inputs<C0> {
     fn raymarch(&self, ro: Vec3, rd: Vec3, tminmax: Vec2) -> Vec3 {
         let mut t: f32 = tminmax.x;
         let dt: f32 = 0.02;

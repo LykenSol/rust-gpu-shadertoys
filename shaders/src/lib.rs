@@ -29,7 +29,7 @@ pub mod soft_shadow_variation;
 pub mod tileable_water_caustic;
 pub mod two_tweets;
 
-pub trait Channel: Copy {
+pub trait SampleCube: Copy {
     fn sample_cube(self, p: Vec3) -> Vec4;
 }
 
@@ -38,7 +38,7 @@ struct ConstantColor {
     color: Vec4,
 }
 
-impl Channel for ConstantColor {
+impl SampleCube for ConstantColor {
     fn sample_cube(self, _: Vec3) -> Vec4 {
         self.color
     }
@@ -50,7 +50,7 @@ struct RgbCube {
     intensity: f32,
 }
 
-impl Channel for RgbCube {
+impl SampleCube for RgbCube {
     fn sample_cube(self, p: Vec3) -> Vec4 {
         (p.abs() * self.intensity).extend(self.alpha)
     }
