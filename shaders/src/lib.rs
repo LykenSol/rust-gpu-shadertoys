@@ -14,6 +14,7 @@ pub mod atmosphere_system_test;
 pub mod bubble_buckey_balls;
 pub mod clouds;
 pub mod filtering_procedurals;
+pub mod flappy_bird;
 pub mod galaxy_of_universes;
 pub mod geodesic_tiling;
 pub mod heart;
@@ -196,6 +197,8 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             mouse,
         })
         .main_image(&mut color, frag_coord),
+        23 => flappy_bird::State::new(flappy_bird::Inputs { resolution, time })
+            .main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
