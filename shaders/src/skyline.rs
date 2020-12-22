@@ -11,7 +11,7 @@
 //! */
 //! ```
 
-use crate::Channel;
+use crate::SampleCube;
 use shared::*;
 use spirv_std::glam::{
     const_vec2, vec2, vec3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
@@ -497,7 +497,7 @@ fn calc_windows(
     normal.x += pits * 0.25;
 }
 
-impl<C0: Channel> State<C0> {
+impl<C0: SampleCube> State<C0> {
     // Input is UV coordinate of pixel to render.
     // Output is RGB color.
     fn ray_trace(&mut self, frag_coord: Vec2) -> Vec3 {
@@ -982,7 +982,7 @@ impl<C0: Channel> State<C0> {
     }
 }
 
-impl<C0: Channel> State<C0> {
+impl<C0: SampleCube> State<C0> {
     // This function breaks the image down into blocks and scans
     // through them, rendering 1 block at a time. It's for non-
     // realtime things that take a long time to render.
