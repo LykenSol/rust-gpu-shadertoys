@@ -13,6 +13,7 @@ pub mod apollonian;
 pub mod atmosphere_system_test;
 pub mod bubble_buckey_balls;
 pub mod clouds;
+pub mod filtering_procedurals;
 pub mod galaxy_of_universes;
 pub mod heart;
 pub mod mandelbrot_smooth;
@@ -181,6 +182,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
                 intensity: 1.0,
             },
         })
+        .main_image(&mut color, frag_coord),
+        21 => filtering_procedurals::Inputs {
+            resolution,
+            time,
+            mouse,
+        }
         .main_image(&mut color, frag_coord),
         _ => {}
     }
