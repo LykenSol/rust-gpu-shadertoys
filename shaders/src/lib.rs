@@ -15,6 +15,7 @@ pub mod bubble_buckey_balls;
 pub mod clouds;
 pub mod filtering_procedurals;
 pub mod galaxy_of_universes;
+pub mod geodesic_tiling;
 pub mod heart;
 pub mod mandelbrot_smooth;
 pub mod miracle_snowflakes;
@@ -188,6 +189,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             time,
             mouse,
         }
+        .main_image(&mut color, frag_coord),
+        22 => geodesic_tiling::State::new(geodesic_tiling::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
         .main_image(&mut color, frag_coord),
         _ => {}
     }

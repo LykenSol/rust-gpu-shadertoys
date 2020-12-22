@@ -105,6 +105,7 @@ pub trait FloatExt {
     fn rem_euclid(self, rhs: Self) -> Self;
     fn gl_sign(self) -> Self;
     fn deg_to_radians(self) -> Self;
+    fn step(self, x: Self) -> Self;
 }
 
 impl FloatExt for f32 {
@@ -134,6 +135,14 @@ impl FloatExt for f32 {
     fn deg_to_radians(self) -> f32 {
         PI * self / 180.0
     }
+
+    fn step(self, x: f32) -> f32 {
+        if x < self {
+            0.0
+        } else {
+            1.0
+        }
+}
 }
 
 pub trait VecExt {
@@ -148,14 +157,6 @@ pub trait VecExt {
     fn reflect(self, normal: Self) -> Self;
     fn distance(self, other: Self) -> f32;
     fn gl_sign(self) -> Self;
-}
-
-fn step(edge: f32, x: f32) -> f32 {
-    if x < edge {
-        0.0
-    } else {
-        1.0
-    }
 }
 
 impl VecExt for Vec2 {
@@ -188,7 +189,7 @@ impl VecExt for Vec2 {
     }
 
     fn step(self, other: Vec2) -> Vec2 {
-        vec2(step(self.x, other.x), step(self.y, other.y))
+        vec2(self.x.step(other.x), self.y.step(other.y))
     }
 
     fn reflect(self, normal: Vec2) -> Vec2 {
@@ -239,9 +240,9 @@ impl VecExt for Vec3 {
 
     fn step(self, other: Vec3) -> Vec3 {
         vec3(
-            step(self.x, other.x),
-            step(self.y, other.y),
-            step(self.z, other.z),
+            self.x.step(other.x),
+            self.y.step(other.y),
+            self.z.step(other.z),
         )
     }
 
@@ -304,10 +305,10 @@ impl VecExt for Vec4 {
 
     fn step(self, other: Vec4) -> Vec4 {
         vec4(
-            step(self.x, other.x),
-            step(self.y, other.y),
-            step(self.z, other.z),
-            step(self.w, other.w),
+            self.x.step(other.x),
+            self.y.step(other.y),
+            self.z.step(other.z),
+            self.w.step(other.w),
         )
     }
 
