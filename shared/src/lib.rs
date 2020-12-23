@@ -142,7 +142,7 @@ impl FloatExt for f32 {
         } else {
             1.0
         }
-}
+    }
 }
 
 pub trait VecExt {
@@ -153,6 +153,7 @@ pub trait VecExt {
     fn sqrt(self) -> Self;
     fn ln(self) -> Self;
     fn rem_euclid(self, m: f32) -> Self;
+    fn rem_euclid_vec(self, m: Self) -> Self;
     fn step(self, other: Self) -> Self;
     fn reflect(self, normal: Self) -> Self;
     fn distance(self, other: Self) -> f32;
@@ -186,6 +187,10 @@ impl VecExt for Vec2 {
 
     fn rem_euclid(self, m: f32) -> Vec2 {
         vec2(self.x.rem_euclid(m), self.y.rem_euclid(m))
+    }
+
+    fn rem_euclid_vec(self, m: Vec2) -> Vec2 {
+        vec2(self.x.rem_euclid(m.x), self.y.rem_euclid(m.y))
     }
 
     fn step(self, other: Vec2) -> Vec2 {
@@ -235,6 +240,14 @@ impl VecExt for Vec3 {
             self.x.rem_euclid(m),
             self.y.rem_euclid(m),
             self.z.rem_euclid(m),
+        )
+    }
+
+    fn rem_euclid_vec(self, m: Vec3) -> Vec3 {
+        vec3(
+            self.x.rem_euclid(m.x),
+            self.y.rem_euclid(m.y),
+            self.z.rem_euclid(m.z),
         )
     }
 
@@ -300,6 +313,15 @@ impl VecExt for Vec4 {
             self.y.rem_euclid(m),
             self.z.rem_euclid(m),
             self.w.rem_euclid(m),
+        )
+    }
+
+    fn rem_euclid_vec(self, m: Vec4) -> Vec4 {
+        vec4(
+            self.x.rem_euclid(m.x),
+            self.y.rem_euclid(m.y),
+            self.z.rem_euclid(m.z),
+            self.w.rem_euclid(m.w),
         )
     }
 
