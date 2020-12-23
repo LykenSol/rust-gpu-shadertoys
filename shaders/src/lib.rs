@@ -22,6 +22,7 @@ pub mod mandelbrot_smooth;
 pub mod miracle_snowflakes;
 pub mod morphing;
 pub mod moving_square;
+pub mod on_off_spikes;
 pub mod phantom_star;
 pub mod playing_marble;
 pub mod protean_clouds;
@@ -61,7 +62,7 @@ impl SampleCube for RgbCube {
 }
 
 pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
-    const COLS: usize = 5;
+    const COLS: usize = 6;
     const ROWS: usize = 5;
 
     let resolution = vec3(
@@ -203,6 +204,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         24 => {
             tokyo::State::new(tokyo::Inputs { resolution, time }).main_image(&mut color, frag_coord)
         }
+        25 => on_off_spikes::State::new(on_off_spikes::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
+        .main_image(&mut color, frag_coord),
         _ => {}
     }
     pow(color.truncate(), 2.2).extend(color.w)
