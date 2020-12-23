@@ -18,6 +18,7 @@ pub mod flappy_bird;
 pub mod galaxy_of_universes;
 pub mod geodesic_tiling;
 pub mod heart;
+pub mod luminescence;
 pub mod mandelbrot_smooth;
 pub mod miracle_snowflakes;
 pub mod morphing;
@@ -205,6 +206,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
             tokyo::State::new(tokyo::Inputs { resolution, time }).main_image(&mut color, frag_coord)
         }
         25 => on_off_spikes::State::new(on_off_spikes::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
+        .main_image(&mut color, frag_coord),
+        26 => luminescence::State::new(luminescence::Inputs {
             resolution,
             time,
             mouse,
