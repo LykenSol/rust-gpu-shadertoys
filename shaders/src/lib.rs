@@ -34,6 +34,7 @@ pub mod soft_shadow_variation;
 pub mod tileable_water_caustic;
 pub mod tokyo;
 pub mod two_tweets;
+pub mod voxel_pac_man;
 
 pub trait SampleCube: Copy {
     fn sample_cube(self, p: Vec3) -> Vec4;
@@ -212,6 +213,12 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         })
         .main_image(&mut color, frag_coord),
         26 => luminescence::State::new(luminescence::Inputs {
+            resolution,
+            time,
+            mouse,
+        })
+        .main_image(&mut color, frag_coord),
+        27 => voxel_pac_man::State::new(voxel_pac_man::Inputs {
             resolution,
             time,
             mouse,
