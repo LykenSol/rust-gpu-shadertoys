@@ -81,7 +81,9 @@ fn noise2(x: Vec2) -> f32 {
     let mut f: Vec2 = x.gl_fract();
     f = f * f * (Vec2::splat(3.0) - 2.0 * f);
     let n: f32 = p.x + p.y * 157.0;
-    let h: Vec4 = hash4(Vec4::splat(n) + vec4(NC0.x, NC0.y, NC1.x, NC1.y));
+    let nc0 = NC0;
+    let nc1 = NC1;
+    let h: Vec4 = hash4(Vec4::splat(n) + vec4(nc0.x, nc0.y, nc1.x, nc1.y));
     let s1: Vec2 = mix(h.xy(), h.zw(), f.xx());
     mix(s1.x, s1.y, f.y)
 }
