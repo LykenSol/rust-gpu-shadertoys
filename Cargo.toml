@@ -17,11 +17,29 @@ winit = { version = "0.23", features = ["web-sys"] }
 wgpu-subscriber = "0.1.0"
 
 [build-dependencies]
-spirv-builder = { version = "*", default-features = false }
+spirv-builder = { version = "0.3.0-alpha.0", default-features = false }
 
 [workspace]
 members = ["shaders"]
 
 [patch.crates-io]
-spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "c1dc273e706fa0e09a651131e1adee39bd49c2b2" }
-spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "c1dc273e706fa0e09a651131e1adee39bd49c2b2" }
+spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "320bc0562682afc8afb51ca928d22a39edd6f00b" }
+spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "320bc0562682afc8afb51ca928d22a39edd6f00b" }
+
+# Compile build-dependencies in release mode with
+# the same settings as regular dependencies.
+[profile.release.build-override]
+opt-level = 3
+codegen-units = 16
+
+# HACK(eddyb) also compile debug mode's build-dependencies with optimizations,
+# because otherwise `rustc_codegen_spirv` (esspecially its linker) is too slow.
+# Also `spirv-opt` *alone* takes (just) over an hour to run, though this only
+# brings it down only to 10 minutes, so I've disabled it below, for now.
+[profile.dev.build-override]
+opt-level = 3
+
+# HACK(eddyb) don't optimize the shader crate, to avoid `spirv-opt` taking
+# a long time (10 minutes if itself was optimized, over an hour otherwise).
+[profile.release.package."shadertoys-shaders"]
+opt-level = 0
