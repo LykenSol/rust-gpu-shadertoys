@@ -5,4 +5,4 @@ authors = []
 edition = "2018"
 
 [dependencies]
-spirv-std = "0.3.0-alpha.0"
+spirv-std = "*"
