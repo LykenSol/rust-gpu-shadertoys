@@ -1,7 +1,7 @@
 //! Ported to Rust from <https://www.shadertoy.com/view/4tdSWr>
 
 use shared::*;
-use spirv_std::glam::{const_mat2, const_vec3, vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use glam::{const_mat2, const_vec3, vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.

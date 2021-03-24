@@ -6,7 +6,8 @@
 //! // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 //! ```
 
-use spirv_std::glam::{vec3, Vec2, Vec3, Vec4};
+use glam::{vec3, Vec2, Vec3, Vec4};
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.

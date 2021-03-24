@@ -8,12 +8,14 @@
 
 use core::f32::consts::PI;
 use core::ops::{Add, Mul, Sub};
-use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec3A, Vec4};
+use glam::{vec2, vec3, vec4, Vec2, Vec3, Vec3A, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
 #[cfg(target_arch = "spirv")]
 use spirv_std::num_traits::Float;
+
+pub use glam;
 
 #[derive(Copy, Clone)]
 #[allow(unused_attributes)]

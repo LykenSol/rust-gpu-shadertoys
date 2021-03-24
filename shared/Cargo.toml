@@ -5,4 +5,5 @@ authors = []
 edition = "2018"
 
 [dependencies]
-spirv-std = "*"
+spirv-std = "0.4.0-alpha.0"
+glam = { version = "0.13", default-features = false, features = ["libm", "scalar-math"] }

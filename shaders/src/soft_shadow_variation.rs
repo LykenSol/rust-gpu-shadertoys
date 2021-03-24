@@ -2,7 +2,7 @@
 //!
 //! Original comment:
 //! ```glsl
-//! //    
+//! //
 //! // Testing Sebastian Aaltonen's soft shadow improvement
 //! //
 //! // The technique is based on estimating a better closest point in ray
@@ -16,8 +16,8 @@
 //! // Go to lines 54 to compare both.
 //! ```
 
+use glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.

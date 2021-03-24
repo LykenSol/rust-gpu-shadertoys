@@ -27,7 +27,7 @@
 //! ```
 
 use shared::*;
-use spirv_std::glam::{
+use glam::{
     const_mat3, vec2, vec3, vec4, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
 };
 

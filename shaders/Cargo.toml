@@ -8,5 +8,5 @@ edition = "2018"
 crate-type = ["dylib"]
 
 [dependencies]
-spirv-std = "*"
+spirv-std = "0.4.0-alpha.0"
 shared = { path = "../shared" }

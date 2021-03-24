@@ -3,9 +3,8 @@
 #![feature(register_attr)]
 #![register_attr(spirv)]
 
+use glam::{vec2, vec3, vec4, Vec2, Vec3, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, vec4, Vec2, Vec3, Vec4};
-use spirv_std::storage_class::{Input, Output, PushConstant};
 
 pub mod a_lot_of_spheres;
 pub mod a_question_of_time;
@@ -232,29 +231,22 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
 #[allow(unused_attributes)]
 #[spirv(fragment)]
 pub fn main_fs(
-    #[spirv(frag_coord)] in_frag_coord: Input<Vec4>,
-    constants: PushConstant<ShaderConstants>,
-    mut output: Output<Vec4>,
+    #[spirv(frag_coord)] in_frag_coord: Vec4,
+    #[spirv(push_constant)] constants: &ShaderConstants,
+    output: &mut Vec4,
 ) {
-    let constants = constants.load();
-
-    let frag_coord = vec2(in_frag_coord.load().x, in_frag_coord.load().y);
-    let color = fs(&constants, frag_coord);
-    output.store(color);
+    let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
+    let color = fs(constants, frag_coord);
+    *output = color;
 }
 
 #[allow(unused_attributes)]
 #[spirv(vertex)]
-pub fn main_vs(
-    #[spirv(vertex_index)] vert_idx: Input<i32>,
-    #[spirv(position)] mut builtin_pos: Output<Vec4>,
-) {
-    let vert_idx = vert_idx.load();
-
+pub fn main_vs(#[spirv(vertex_index)] vert_idx: i32, #[spirv(position)] builtin_pos: &mut Vec4) {
     // Create a "full screen triangle" by mapping the vertex index.
     // ported from https://www.saschawillems.de/blog/2016/08/13/vulkan-tutorial-on-rendering-a-fullscreen-quad-without-buffers/
     let uv = vec2(((vert_idx << 1) & 2) as f32, (vert_idx & 2) as f32);
     let pos = 2.0 * uv - Vec2::one();
 
-    builtin_pos.store(pos.extend(0.0).extend(1.0));
+    *builtin_pos = pos.extend(0.0).extend(1.0);
 }
