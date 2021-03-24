@@ -78,7 +78,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
         constants.drag_start_x / COLS as f32,
         constants.drag_start_y / ROWS as f32,
     );
-    if mouse != Vec4::zero() {
+    if mouse != Vec4::ZERO {
         mouse.y = resolution.y - mouse.y;
         mouse.w = resolution.y - mouse.w;
     }
@@ -96,7 +96,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
     frag_coord.x %= resolution.x;
     frag_coord.y = resolution.y - frag_coord.y % resolution.y;
 
-    let mut color = Vec4::zero();
+    let mut color = Vec4::ZERO;
     match i {
         0 => two_tweets::Inputs { resolution, time }.main_image(&mut color, frag_coord),
         1 => heart::Inputs { resolution, time }.main_image(&mut color, frag_coord),
@@ -167,7 +167,7 @@ pub fn fs(constants: &ShaderConstants, mut frag_coord: Vec2) -> Vec4 {
                 alpha: 1.0,
                 intensity: 0.5,
             },
-            channel1: ConstantColor { color: Vec4::one() },
+            channel1: ConstantColor { color: Vec4::ONE },
         })
         .main_image(&mut color, frag_coord),
         18 => raymarching_primitives::Inputs {
@@ -246,7 +246,7 @@ pub fn main_vs(#[spirv(vertex_index)] vert_idx: i32, #[spirv(position)] builtin_
     // Create a "full screen triangle" by mapping the vertex index.
     // ported from https://www.saschawillems.de/blog/2016/08/13/vulkan-tutorial-on-rendering-a-fullscreen-quad-without-buffers/
     let uv = vec2(((vert_idx << 1) & 2) as f32, (vert_idx & 2) as f32);
-    let pos = 2.0 * uv - Vec2::one();
+    let pos = 2.0 * uv - Vec2::ONE;
 
     *builtin_pos = pos.extend(0.0).extend(1.0);
 }

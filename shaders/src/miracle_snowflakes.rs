@@ -62,9 +62,9 @@ impl State {
             powr: 0.0,
             res: 0.0,
 
-            nray: Vec3::zero(),
-            nray1: Vec3::zero(),
-            nray2: Vec3::zero(),
+            nray: Vec3::ZERO,
+            nray1: Vec3::ZERO,
+            nray2: Vec3::ZERO,
             mxc: 1.0,
         }
     }
@@ -256,20 +256,20 @@ impl State {
         let mut pos: Vec3 = vec3(0.0, 0.0, 1.0);
 
         *frag_color = vec4(0.0, 0.0, 0.0, 0.0);
-        self.nray = Vec3::zero();
-        self.nray1 = Vec3::zero();
-        self.nray2 = Vec3::zero();
+        self.nray = Vec3::ZERO;
+        self.nray1 = Vec3::ZERO;
+        self.nray2 = Vec3::ZERO;
 
-        let mut refcolor: Vec4 = Vec4::zero();
+        let mut refcolor: Vec4 = Vec4::ZERO;
         self.iteratorc = ITERATIONS - LAYERS;
 
-        let mut addrot: Vec2 = Vec2::zero();
+        let mut addrot: Vec2 = Vec2::ZERO;
         if self.inputs.mouse.z > 0.0 {
             addrot = (self.inputs.mouse.xy() - self.inputs.resolution.xy() * 0.5) * self.res;
         }
 
         let mut mxcl: f32 = 1.0;
-        let mut addpos: Vec3 = Vec3::zero();
+        let mut addpos: Vec3 = Vec3::ZERO;
         pos.z = 1.0;
         self.mxc = 1.0;
         self.radius = 0.25;
@@ -362,7 +362,7 @@ impl State {
             i += 1;
         }
 
-        let cr: Vec3 = mix(Vec3::zero(), vec3(0.0, 0.0, 0.4), (-0.55 + p.y) * 2.0);
+        let cr: Vec3 = mix(Vec3::ZERO, vec3(0.0, 0.0, 0.4), (-0.55 + p.y) * 2.0);
         *frag_color = (frag_color.xyz()
             + mix(
                 (cr - frag_color.xyz()) * 0.1,
@@ -371,6 +371,6 @@ impl State {
             ))
         .extend(frag_color.z);
 
-        *frag_color = Vec4::one().min(*frag_color);
+        *frag_color = Vec4::ONE.min(*frag_color);
     }
 }

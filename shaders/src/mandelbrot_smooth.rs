@@ -41,7 +41,7 @@ impl Inputs {
         }
         const B: f32 = 256.0;
         let mut l: f32 = 0.0;
-        let mut z: Vec2 = Vec2::zero();
+        let mut z: Vec2 = Vec2::ZERO;
         let mut i = 0;
         while i < 512 {
             z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
@@ -67,7 +67,7 @@ impl Inputs {
     }
 
     pub fn main_image(&self, frag_color: &mut Vec4, frag_coord: Vec2) {
-        let mut col: Vec3 = Vec3::zero();
+        let mut col: Vec3 = Vec3::ZERO;
 
         let mut m = 0;
         while m < AA {

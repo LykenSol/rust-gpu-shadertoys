@@ -62,7 +62,7 @@ impl Inputs {
         c /= MAX_ITER as f32;
         c = 1.17 - c.powf(1.4);
         let mut colour: Vec3 = Vec3::splat(c.abs().powf(8.0));
-        colour = (colour + vec3(0.0, 0.35, 0.5)).clamp(Vec3::zero(), Vec3::one());
+        colour = (colour + vec3(0.0, 0.35, 0.5)).clamp(Vec3::ZERO, Vec3::ONE);
 
         if SHOW_TILING {
             let pixel: Vec2 = 2.0 / self.resolution.xy();

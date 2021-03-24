@@ -33,7 +33,7 @@ impl State {
     pub fn new(inputs: Inputs) -> Self {
         State {
             inputs,
-            orb: Vec4::zero(),
+            orb: Vec4::ZERO,
         }
     }
 }
@@ -101,7 +101,7 @@ impl State {
 
     fn render(&mut self, ro: Vec3, rd: Vec3, anim: f32) -> Vec3 {
         // trace
-        let mut col: Vec3 = Vec3::zero();
+        let mut col: Vec3 = Vec3::ZERO;
         let t: f32 = self.trace(ro, rd, anim);
         if t > 0.0 {
             let tra: Vec4 = self.orb;
@@ -121,7 +121,7 @@ impl State {
             brdf += 1.0 * vec3(0.40, 0.40, 0.40) * bac * ao;
 
             // material
-            let mut rgb: Vec3 = Vec3::one();
+            let mut rgb: Vec3 = Vec3::ONE;
             rgb = mix(rgb, vec3(1.0, 0.80, 0.2), (6.0 * tra.y).clamp(0.0, 1.0));
             rgb = mix(
                 rgb,
@@ -139,7 +139,7 @@ impl State {
     pub fn main_image(&mut self, frag_color: &mut Vec4, frag_coord: Vec2) {
         let time: f32 = self.inputs.time * 0.25 + 0.01 * self.inputs.mouse.x;
         let anim: f32 = 1.1 + 0.5 * smoothstep(-0.3, 0.3, (0.1 * self.inputs.time).cos());
-        let mut tot: Vec3 = Vec3::zero();
+        let mut tot: Vec3 = Vec3::ZERO;
 
         let mut jj = 0;
         while jj < AA {

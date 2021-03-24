@@ -32,7 +32,7 @@ impl State {
         State {
             inputs,
 
-            frag_color: Vec4::zero(),
+            frag_color: Vec4::ZERO,
         }
     }
 }

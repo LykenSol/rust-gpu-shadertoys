@@ -51,7 +51,7 @@ fn hash3(mut p: Vec3) -> Vec3 {
         p.dot(vec3(113.5, 271.9, 124.6)),
     );
 
-    -Vec3::one() + 2.0 * (p.sin() * 13.5453123).gl_fract()
+    -Vec3::ONE + 2.0 * (p.sin() * 13.5453123).gl_fract()
 }
 
 fn noise(p: Vec3) -> f32 {
@@ -150,9 +150,9 @@ fn intersect(
 ) -> f32 {
     // raytrace
     let mut tmin: f32 = 10000.0;
-    *nor = Vec3::zero();
+    *nor = Vec3::ZERO;
     *occ = 1.0;
-    *pos = Vec3::zero();
+    *pos = Vec3::ZERO;
 
     // raytrace-plane
     let mut h: f32 = (0.0 - ro.y) / rd.y;
@@ -222,7 +222,7 @@ fn mytexture(mut p: Vec3, _n: Vec3, matid: f32) -> Vec3 {
     let f: f32 = (ip.x + (ip.y + ip.z.rem_euclid(2.0)).rem_euclid(2.0)).rem_euclid(2.0);
 
     let mut g: f32 =
-        0.5 + 1.0 * noise(p * mix(vec3(0.2 + 0.8 * f, 1.0, 1.0 - 0.8 * f), Vec3::one(), matid));
+        0.5 + 1.0 * noise(p * mix(vec3(0.2 + 0.8 * f, 1.0, 1.0 - 0.8 * f), Vec3::ONE, matid));
 
     g *= mix(
         smoothstep(0.03, 0.04, (fp.x - 0.5).abs() / 0.5)
@@ -274,8 +274,8 @@ impl Inputs {
     fn calc_ray_for_pixel(&self, pix: Vec2, res_ro: &mut Vec3, res_rd: &mut Vec3) {
         let p: Vec2 = (-self.resolution.xy() + 2.0 * pix) / self.resolution.y;
         // camera movement
-        let mut ro: Vec3 = Vec3::zero();
-        let mut ta: Vec3 = Vec3::zero();
+        let mut ro: Vec3 = Vec3::ZERO;
+        let mut ta: Vec3 = Vec3::ZERO;
         self.calc_camera(&mut ro, &mut ta);
         // camera matrix
         let ww: Vec3 = (ta - ro).normalize();
@@ -300,7 +300,7 @@ fn sample_texture_with_filter(
     let sx: i32 = 1 + (4.0 * (ddx_uvw - uvw).length()).clamp(0.0, (MAX_SAMPLES - 1) as f32) as i32;
     let sy: i32 = 1 + (4.0 * (ddy_uvw - uvw).length()).clamp(0.0, (MAX_SAMPLES - 1) as f32) as i32;
 
-    let mut no: Vec3 = Vec3::zero();
+    let mut no: Vec3 = Vec3::ZERO;
 
     if true {
         let mut j = 0;
@@ -352,19 +352,19 @@ impl Inputs {
             th = 0.5 / self.resolution.y;
         }
 
-        let mut ro: Vec3 = Vec3::zero();
-        let mut rd: Vec3 = Vec3::zero();
-        let mut ddx_ro: Vec3 = Vec3::zero();
-        let mut ddx_rd: Vec3 = Vec3::zero();
-        let mut ddy_ro: Vec3 = Vec3::zero();
-        let mut ddy_rd: Vec3 = Vec3::zero();
+        let mut ro: Vec3 = Vec3::ZERO;
+        let mut rd: Vec3 = Vec3::ZERO;
+        let mut ddx_ro: Vec3 = Vec3::ZERO;
+        let mut ddx_rd: Vec3 = Vec3::ZERO;
+        let mut ddy_ro: Vec3 = Vec3::ZERO;
+        let mut ddy_rd: Vec3 = Vec3::ZERO;
         self.calc_ray_for_pixel(frag_coord + vec2(0.0, 0.0), &mut ro, &mut rd);
         self.calc_ray_for_pixel(frag_coord + vec2(1.0, 0.0), &mut ddx_ro, &mut ddx_rd);
         self.calc_ray_for_pixel(frag_coord + vec2(0.0, 1.0), &mut ddy_ro, &mut ddy_rd);
 
         // trace
-        let mut pos: Vec3 = Vec3::zero();
-        let mut nor: Vec3 = Vec3::zero();
+        let mut pos: Vec3 = Vec3::ZERO;
+        let mut nor: Vec3 = Vec3::ZERO;
         let mut occ: f32 = 0.0;
         let mut mid: f32 = 0.0;
         let t: f32 = intersect(ro, rd, &mut pos, &mut nor, &mut occ, &mut mid);

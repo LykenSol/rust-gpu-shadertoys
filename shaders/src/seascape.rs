@@ -9,10 +9,8 @@
 //! */
 //! ```
 
+use glam::{const_mat2, const_vec3, vec2, vec3, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use glam::{
-    const_mat2, const_vec3, vec2, vec3, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4,
-};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -105,7 +103,7 @@ fn get_sky_color(mut e: Vec3) -> Vec3 {
 // sea
 fn sea_octave(mut uv: Vec2, choppy: f32) -> f32 {
     uv += Vec2::splat(noise(uv));
-    let mut wv: Vec2 = Vec2::one() - uv.sin().abs();
+    let mut wv: Vec2 = Vec2::ONE - uv.sin().abs();
     let swv: Vec2 = uv.cos().abs();
     wv = mix(wv, swv, wv);
     (1.0 - (wv.x * wv.y).powf(0.65)).powf(choppy)
@@ -179,7 +177,7 @@ fn get_sea_color(p: Vec3, n: Vec3, l: Vec3, eye: Vec3, dist: Vec3) -> Vec3 {
 impl Inputs {
     // tracing
     fn get_normal(&self, p: Vec3, eps: f32) -> Vec3 {
-        let mut n: Vec3 = Vec3::zero();
+        let mut n: Vec3 = Vec3::ZERO;
         n.y = self.map_detailed(p);
         n.x = self.map_detailed(vec3(p.x + eps, p.y, p.z)) - n.y;
         n.z = self.map_detailed(vec3(p.x, p.y, p.z + eps)) - n.y;
@@ -215,7 +213,7 @@ impl Inputs {
 
     fn get_pixel(&self, coord: Vec2, time: f32) -> Vec3 {
         let mut uv: Vec2 = coord / self.resolution.xy();
-        uv = uv * 2.0 - Vec2::one();
+        uv = uv * 2.0 - Vec2::ONE;
         uv.x *= self.resolution.x / self.resolution.y;
         // ray
         let ang: Vec3 = vec3((time * 3.0).sin() * 0.1, time.sin() * 0.2 + 0.3, time);
@@ -224,7 +222,7 @@ impl Inputs {
         dir.z += uv.length() * 0.14;
         dir = from_euler(ang).transpose() * dir.normalize();
         // tracing
-        let mut p: Vec3 = Vec3::zero();
+        let mut p: Vec3 = Vec3::ZERO;
         self.height_map_tracing(ori, dir, &mut p);
         let dist: Vec3 = p - ori;
         let n: Vec3 = self.get_normal(p, dist.dot(dist) * self.epsilon_nrm());
@@ -242,7 +240,7 @@ impl Inputs {
         let time: f32 = self.time * 0.3 + self.mouse.x * 0.01;
         let mut color: Vec3;
         if AA {
-            color = Vec3::zero();
+            color = Vec3::ZERO;
             let mut i = -1;
             while i <= 1 {
                 let mut j = -1;

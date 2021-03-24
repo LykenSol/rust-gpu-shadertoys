@@ -12,10 +12,8 @@
 //! ```
 
 use crate::SampleCube;
+use glam::{const_vec2, vec2, vec3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use glam::{
-    const_vec2, vec2, vec3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
-};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -58,11 +56,11 @@ impl<C0> State<C0> {
             seed: 1.0,
 
             fade: 1.0,
-            sun_dir: Vec3::zero(),
-            sun_col: Vec3::zero(),
+            sun_dir: Vec3::ZERO,
+            sun_col: Vec3::ZERO,
             exposure: 1.0,
-            sky_col: Vec3::zero(),
-            horizon_col: Vec3::zero(),
+            sky_col: Vec3::ZERO,
+            horizon_col: Vec3::ZERO,
 
             march_count: 0.0,
         }
@@ -144,10 +142,10 @@ fn noise(uv: Vec3) -> f32 {
 const PI: f32 = 3.14159265;
 
 fn saturate_vec3(a: Vec3) -> Vec3 {
-    a.clamp(Vec3::zero(), Vec3::one())
+    a.clamp(Vec3::ZERO, Vec3::ONE)
 }
 fn _saturate_vec2(a: Vec2) -> Vec2 {
-    a.clamp(Vec2::zero(), Vec2::one())
+    a.clamp(Vec2::ZERO, Vec2::ONE)
 }
 fn saturate(a: f32) -> f32 {
     a.clamp(0.0, 1.0)
@@ -180,7 +178,7 @@ impl<C0> State<C0> {
         n = mix(n * 0.2, n, saturate((ray_dir.y * 8.0).abs())); // fade clouds in distance
         final_color = mix(
             final_color,
-            (Vec3::one() + self.sun_col * 10.0) * 0.75 * saturate((ray_dir.y + 0.2) * 5.0),
+            (Vec3::ONE + self.sun_col * 10.0) * 0.75 * saturate((ray_dir.y + 0.2) * 5.0),
             saturate(n * 0.125),
         );
 
@@ -227,7 +225,7 @@ fn matmin(a: Vec2, b: Vec2) -> Vec2 {
 // signed box distance field
 fn sd_box(p: Vec3, radius: Vec3) -> f32 {
     let dist: Vec3 = p.abs() - radius;
-    dist.x.max(dist.y.max(dist.z)).min(0.0) + dist.max(Vec3::zero()).length()
+    dist.x.max(dist.y.max(dist.z)).min(0.0) + dist.max(Vec3::ZERO).length()
 }
 
 // capped cylinder distance field
@@ -282,7 +280,7 @@ const VOXEL_PAD: f32 = 0.2;
 // pint is an integer pair saying which city block you are on
 fn city_block(p: Vec3, pint: Vec2) -> Vec2 {
     // Get random numbers for this block by hashing the city block variable
-    let mut rand: Vec4 = Vec4::zero();
+    let mut rand: Vec4 = Vec4::ZERO;
     rand = hash22(pint).extend(rand.z).extend(rand.w);
     rand = hash22(rand.xy()).extend(rand.x).extend(rand.y).zwxy();
     let mut rand2: Vec2 = hash22(rand.zw());
@@ -510,12 +508,12 @@ impl<C0: SampleCube> State<C0> {
         self.exposure = 1.0;
         self.fade = 1.0;
 
-        let mut cam_pos: Vec3 = Vec3::zero();
-        let mut cam_up: Vec3 = Vec3::zero();
-        let mut cam_lookat: Vec3 = Vec3::zero();
+        let mut cam_pos: Vec3 = Vec3::ZERO;
+        let mut cam_up: Vec3 = Vec3::ZERO;
+        let mut cam_lookat: Vec3 = Vec3::ZERO;
         // ------------------- Set up the camera rays for ray marching --------------------
         // Map uv to [-1.0..1.0]
-        let mut uv: Vec2 = frag_coord / self.inputs.resolution.xy() * 2.0 - Vec2::one();
+        let mut uv: Vec2 = frag_coord / self.inputs.resolution.xy() * 2.0 - Vec2::ONE;
         uv /= 2.0; // zoom in
 
         if MANUAL_CAMERA {
@@ -625,10 +623,10 @@ impl<C0: SampleCube> State<C0> {
         let ray_vec: Vec3 = (world_pix - cam_pos).normalize();
 
         // ----------------------------- Ray march the scene ------------------------------
-        let mut dist_and_mat: Vec2 = Vec2::zero(); // Distance and material
+        let mut dist_and_mat: Vec2 = Vec2::ZERO; // Distance and material
         let mut t: f32 = 0.05; // + Hash2d(uv)*0.1;	// random dither-fade things close to the camera
         let max_depth: f32 = 45.0; // farthest distance rays will travel
-        let mut pos: Vec3 = Vec3::zero();
+        let mut pos: Vec3 = Vec3::ZERO;
         let small_val: f32 = 0.000625;
         // ray marching time
         let mut i = 0;
@@ -780,7 +778,7 @@ impl<C0: SampleCube> State<C0> {
                 // I guess procedural textures are hard to mipmap.
                 let mut col_total: Vec3;
                 let mut col_temp: Vec3 = tex_color;
-                let mut n_temp: Vec3 = Vec3::zero();
+                let mut n_temp: Vec3 = Vec3::ZERO;
                 calc_windows(block, pos, &mut col_temp, &mut window_ref, &mut n_temp);
                 col_total = col_temp;
 
@@ -891,7 +889,7 @@ impl<C0: SampleCube> State<C0> {
             }
 
             // apply noise
-            tex_color *= Vec3::one() * n * 0.05;
+            tex_color *= Vec3::ONE * n * 0.05;
             tex_color *= 0.7;
             tex_color = saturate_vec3(tex_color);
 
@@ -974,11 +972,11 @@ impl<C0: SampleCube> State<C0> {
         }
 
         // vignette?
-        final_color *= Vec3::one() * saturate(1.0 - (uv / 2.5).length());
+        final_color *= Vec3::ONE * saturate(1.0 - (uv / 2.5).length());
         final_color *= 1.3 * self.exposure;
 
         // output the final color without gamma correction - will do gamma later.
-        final_color.clamp(Vec3::zero(), Vec3::one()) * saturate(self.fade + 0.2)
+        final_color.clamp(Vec3::ZERO, Vec3::ONE) * saturate(self.fade + 0.2)
     }
 }
 
@@ -998,7 +996,7 @@ impl<C0: SampleCube> State<C0> {
         let block_size: f32 = 64.0;
         // Make the block repeatedly scan across the image based on time.
         let frame: f32 = (self.inputs.time * Self::BLOCK_RATE).floor();
-        let block_res: Vec2 = (self.inputs.resolution.xy() / block_size).floor() + Vec2::one();
+        let block_res: Vec2 = (self.inputs.resolution.xy() / block_size).floor() + Vec2::ONE;
         // ugly bug with mod.
         //float blockX = mod(frame, blockRes.x);
         let block_x: f32 = (frame / block_res.x).gl_fract() * block_res.x;
@@ -1021,7 +1019,7 @@ impl<C0: SampleCube> State<C0> {
         }
 
         // Do a multi-pass render
-        let mut final_color: Vec3 = Vec3::zero();
+        let mut final_color: Vec3 = Vec3::ZERO;
         if NON_REALTIME_HQ_RENDER {
             let mut i = 0.0;
             while i < ANTIALIASING_SAMPLES {
@@ -1055,9 +1053,6 @@ impl<C0: SampleCube> State<C0> {
             final_color = self.ray_trace(frag_coord);
         }
 
-        *frag_color = final_color
-            .clamp(Vec3::zero(), Vec3::one())
-            .sqrt()
-            .extend(1.0);
+        *frag_color = final_color.clamp(Vec3::ZERO, Vec3::ONE).sqrt().extend(1.0);
     }
 }

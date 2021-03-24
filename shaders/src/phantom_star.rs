@@ -34,7 +34,7 @@ fn pmod(p: Vec2, r: f32) -> Vec2 {
 
 fn box_(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 impl Inputs {

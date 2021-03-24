@@ -11,8 +11,8 @@
 //! */
 //! ```
 
-use shared::*;
 use glam::{const_mat2, vec2, vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -135,16 +135,16 @@ impl Inputs {
         *dist = MAXDISTANCE;
         let mut distcheck: f32 = 0.0;
 
-        let mut sphere_center: Vec3 = Vec3::zero();
+        let mut sphere_center: Vec3 = Vec3::ZERO;
         let mut col: Vec3;
-        let mut normalcheck: Vec3 = Vec3::zero();
+        let mut normalcheck: Vec3 = Vec3::ZERO;
         if intersect_plane(ro, rd, 0.0, &mut distcheck) && distcheck < MAXDISTANCE {
             *dist = distcheck;
             *material = 1;
             *normal = vec3(0.0, 1.0, 0.0);
-            col = Vec3::one();
+            col = Vec3::ONE;
         } else {
-            col = Vec3::zero();
+            col = Vec3::ZERO;
         }
 
         // trace grid
@@ -159,7 +159,7 @@ impl Inputs {
             if *material > 1 || ro.xz().distance(pos.xz()) > *dist + GRIDSIZE {
                 break;
             }
-            let mut offset: Vec2 = Vec2::zero();
+            let mut offset: Vec2 = Vec2::ZERO;
             get_sphere_offset(pos.xz(), &mut offset);
 
             self.get_moving_sphere_position(pos.xz(), -offset, &mut sphere_center);
@@ -187,7 +187,7 @@ impl Inputs {
             i += 1;
         }
 
-        let mut color: Vec3 = Vec3::zero();
+        let mut color: Vec3 = Vec3::ZERO;
         if *material > 0 {
             *intersection = ro + rd * *dist;
             let map: Vec2 = (intersection.xz() / GRIDSIZE).floor() * GRIDSIZE;
@@ -200,10 +200,10 @@ impl Inputs {
                     let mut y = 0;
                     while y < 3 {
                         let mapoffset: Vec2 = map + vec2([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
-                        let mut offset: Vec2 = Vec2::zero();
+                        let mut offset: Vec2 = Vec2::ZERO;
                         get_sphere_offset(mapoffset, &mut offset);
                         let lcolor: Vec3 = get_sphere_color(mapoffset);
-                        let mut lpos: Vec3 = Vec3::zero();
+                        let mut lpos: Vec3 = Vec3::ZERO;
                         self.get_moving_sphere_position(mapoffset, -offset, &mut lpos);
 
                         let mut shadow: f32 = 1.0;
@@ -220,10 +220,10 @@ impl Inputs {
 
                                     let smapoffset: Vec2 =
                                         map + vec2([c.x, c.y, c.z][x], [c.x, c.y, c.z][y]);
-                                    let mut soffset: Vec2 = Vec2::zero();
+                                    let mut soffset: Vec2 = Vec2::ZERO;
                                     get_sphere_offset(smapoffset, &mut soffset);
-                                    let mut slpos: Vec3 = Vec3::zero();
-                                    let mut sn: Vec3 = Vec3::zero();
+                                    let mut slpos: Vec3 = Vec3::ZERO;
+                                    let mut sn: Vec3 = Vec3::ZERO;
                                     get_sphere_position(smapoffset, soffset, &mut slpos);
                                     let mut sd: f32 = 0.0;
                                     if intersect_unit_sphere(
@@ -285,8 +285,8 @@ impl Inputs {
         let mut rd: Vec3 = (p.x * cu + p.y * cv + 1.5 * cw).normalize();
         // raytrace
         let mut material: i32 = 0;
-        let mut normal: Vec3 = Vec3::zero();
-        let mut intersection: Vec3 = Vec3::zero();
+        let mut normal: Vec3 = Vec3::ZERO;
+        let mut intersection: Vec3 = Vec3::ZERO;
         let mut dist: f32 = 0.0;
 
         let mut col: Vec3 = self.trace(
@@ -312,7 +312,7 @@ impl Inputs {
         }
 
         col = col.powf_vec(vec3(EXPOSURE, EXPOSURE, EXPOSURE));
-        col = col.clamp(Vec3::zero(), Vec3::one());
+        col = col.clamp(Vec3::ZERO, Vec3::ONE);
         // vigneting
         col *= 0.25 + 0.75 * (16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y)).powf(0.15);
 

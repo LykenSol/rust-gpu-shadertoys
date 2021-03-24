@@ -6,10 +6,10 @@
 //! // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 //! ```
 
-use shared::*;
 use glam::{
     const_vec3, vec2, vec3, Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
 };
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -41,41 +41,29 @@ impl State {
             inputs,
 
             a: [
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
+                Vec2::ZERO,
             ],
-            t1: [
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-            ],
-            t2: [
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-                Vec2::zero(),
-            ],
+            t1: [Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ZERO],
+            t2: [Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ZERO, Vec2::ZERO],
 
             l: vec3(1.0, 0.72, 1.0).normalize(),
 
             t_morph: 0.0,
-            mat2_rot: Mat2::zero(),
+            mat2_rot: Mat2::ZERO,
         }
     }
 }
@@ -156,14 +144,13 @@ impl State {
         if id_morph == 1 {
             p = (self.mat2_rot.transpose() * p.xz()).extend(p.y).xzy();
             let d: Vec3 = (p - vec3(0.0, 0.5, 0.0)).abs() - vec3(0.8, 0.7, 0.8);
-            d_shape = d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length();
+            d_shape = d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length();
         } else if id_morph == 2 {
             p -= vec3(0.0, 0.55, 0.0);
             let d1: Vec3 = p.abs() - vec3(0.67, 0.67, 0.67 * 1.618);
             let d3: Vec3 = p.abs() - vec3(0.67 * 1.618, 0.67, 0.67);
-            d_shape = d1.x.max(d1.y.max(d1.z)).min(0.0) + d1.max(Vec3::zero()).length();
-            d_shape =
-                d_shape.min(d3.x.max(d3.y.max(d3.z)).min(0.0) + d3.max(Vec3::zero()).length());
+            d_shape = d1.x.max(d1.y.max(d1.z)).min(0.0) + d1.max(Vec3::ZERO).length();
+            d_shape = d_shape.min(d3.x.max(d3.y.max(d3.z)).min(0.0) + d3.max(Vec3::ZERO).length());
         } else {
             d_shape = (p - vec3(0.0, 0.45, 0.0)).length() - 1.1;
         }
@@ -178,10 +165,10 @@ impl State {
 fn hsv2rgb_smooth(x: f32, y: f32, z: f32) -> Vec3 {
     let mut rgb: Vec3 =
         (((x * Vec3::splat(6.0) + vec3(0.0, 4.0, 2.0)).rem_euclid(6.0) - Vec3::splat(3.0)).abs()
-            - Vec3::one())
-        .clamp(Vec3::zero(), Vec3::one());
+            - Vec3::ONE)
+            .clamp(Vec3::ZERO, Vec3::ONE);
     rgb = rgb * rgb * (Vec3::splat(3.0) - 2.0 * rgb); // cubic smoothing
-    z * mix(Vec3::one(), rgb, y)
+    z * mix(Vec3::ONE, rgb, y)
 }
 
 impl State {
@@ -243,7 +230,7 @@ impl State {
         let r: Vec2 = self.inputs.resolution.xy();
         let m: Vec2 = self.inputs.mouse.xy() / r;
         let q: Vec2 = frag_coord / r;
-        let mut p: Vec2 = q + q - Vec2::one();
+        let mut p: Vec2 = q + q - Vec2::ONE;
         p.x *= r.x / r.y;
         let mut j: f32 = 0.0;
         let mut s: f32 = 1.0;

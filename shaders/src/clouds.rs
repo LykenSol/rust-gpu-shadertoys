@@ -42,10 +42,10 @@ fn noise(p: Vec2) -> f32 {
     }; //vec2 of = 0.5 + 0.5*vec2(sign(a.x-a.y), sign(a.y-a.x));
     let b: Vec2 = a - o + Vec2::splat(K2);
     let c: Vec2 = a - Vec2::splat(1.0 - 2.0 * K2);
-    let h: Vec3 = (Vec3::splat(0.5) - vec3(a.dot(a), b.dot(b), c.dot(c))).max(Vec3::zero());
+    let h: Vec3 = (Vec3::splat(0.5) - vec3(a.dot(a), b.dot(b), c.dot(c))).max(Vec3::ZERO);
     let n: Vec3 = (h * h * h * h)
         * vec3(
-            a.dot(hash(i + Vec2::zero())),
+            a.dot(hash(i + Vec2::ZERO)),
             b.dot(hash(i + o)),
             c.dot(hash(i + Vec2::splat(1.0))),
         );
@@ -148,7 +148,7 @@ impl Inputs {
 
         let result: Vec3 = mix(
             skycolour,
-            (SKY_TINT * skycolour + cloudcolour).clamp(Vec3::zero(), Vec3::splat(1.0)),
+            (SKY_TINT * skycolour + cloudcolour).clamp(Vec3::ZERO, Vec3::splat(1.0)),
             (f + c).clamp(0.0, 1.0),
         );
 
