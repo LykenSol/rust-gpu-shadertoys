@@ -1,7 +1,7 @@
 //! Ported to Rust from <https://www.shadertoy.com/view/llXSzX>
 
+use glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -16,7 +16,7 @@ pub struct Inputs {
 fn rect(uv: Vec2, pos: Vec2, r: f32) -> Vec4 {
     let re_c: Vec2 = (uv - pos).abs();
     let dif1: Vec2 = re_c - Vec2::splat(r / 2.);
-    let dif2: Vec2 = (re_c - Vec2::splat(r / 2.)).clamp(Vec2::zero(), Vec2::one());
+    let dif2: Vec2 = (re_c - Vec2::splat(r / 2.)).clamp(Vec2::ZERO, Vec2::ONE);
     let d1: f32 = (dif1.x + dif1.y).clamp(0.0, 1.0);
     let _d2: f32 = (dif2.x + dif2.y).clamp(0.0, 1.0);
 

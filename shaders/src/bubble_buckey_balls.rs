@@ -9,8 +9,8 @@
 //! ```
 
 use crate::SampleCube;
+use glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -39,8 +39,8 @@ impl<C0, C1> State<C0, C1> {
         State {
             inputs,
 
-            cam_point_at: Vec3::zero(),
-            cam_origin: Vec3::zero(),
+            cam_point_at: Vec3::ZERO,
+            cam_origin: Vec3::ZERO,
             time: 0.0,
             ldir: vec3(0.8, 1.0, 0.0),
         }
@@ -224,7 +224,7 @@ impl<C0, C1> State<C0, C1> {
         //let bbi: f32 = 0.0;
 
         let mut mp: Vec3 = p + Vec3::splat(3.0);
-        let bbi: f32 = Vec3::one().dot((mp / 6.).floor());
+        let bbi: f32 = Vec3::ONE.dot((mp / 6.).floor());
         let mr: f32 = 0.4 * (0.7 + 0.5 * (2.0 * self.time - 1.0 * p.y + 6281.0 * bbi).sin());
 
         mp = mp.rem_euclid(6.0) - Vec3::splat(3.0);
@@ -317,7 +317,7 @@ impl<C0, C1> State<C0, C1> {
     fn animate_globals(&mut self) {
         // remap the mouse click ([-1, 1], [-1/ar, 1/ar])
         let mut click: Vec2 = self.inputs.mouse.xy() / self.inputs.resolution.xx();
-        click = 2.0 * click - Vec2::one();
+        click = 2.0 * click - Vec2::ONE;
 
         self.time = 0.8 * self.inputs.time - 10.0;
 
@@ -336,7 +336,7 @@ impl<C0, C1> State<C0, C1> {
         self.cam_origin = rotate_around_x_axis(self.cam_origin, cosrotx, sinrotx);
         self.cam_origin = rotate_around_y_axis(self.cam_origin, cosroty, sinroty);
 
-        self.cam_point_at = Vec3::zero();
+        self.cam_point_at = Vec3::ZERO;
 
         let lroty: f32 = 0.9 * self.time;
         let coslroty: f32 = lroty.cos();
@@ -394,7 +394,7 @@ impl SurfaceData {
         SurfaceData {
             point: p,
             normal: n,
-            basecolor: Vec3::zero(),
+            basecolor: Vec3::ZERO,
             roughness: 0.0,
             metallic: 0.0,
         }
@@ -413,13 +413,13 @@ impl<C0, C1> State<C0, C1> {
     }
 }
 fn material(surfid: f32, surf: &mut SurfaceData) {
-    let _surfcol: Vec3 = Vec3::one();
+    let _surfcol: Vec3 = Vec3::ONE;
     if surfid - 0.5 < SPHERE_MATL {
         surf.basecolor = vec3(0.8, 0.2, 0.5);
         surf.roughness = 0.5;
         surf.metallic = 0.8;
     } else if surfid - 0.5 < CHAMBER_MATL {
-        surf.basecolor = Vec3::zero();
+        surf.basecolor = Vec3::ZERO;
         surf.roughness = 1.0;
     } else if surfid - 0.5 < BOND_MATL {
         surf.basecolor = vec3(0.02, 0.02, 0.05);
@@ -446,7 +446,7 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
 
         let ndl: f32 = costl.clamp(0.0, 1.);
 
-        let mut cout: Vec3 = Vec3::zero();
+        let mut cout: Vec3 = Vec3::ZERO;
 
         if ndl > 0. {
             let frk: f32 = 0.5 + 2.0 * costd * costd * surf.roughness;
@@ -481,7 +481,7 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
 
             // F(h,l) factor
             let f0: Vec3 = mix(Vec3::splat(0.5), surf.basecolor, surf.metallic);
-            let f: Vec3 = f0 + (Vec3::one() - f0) * pow5(1.0 - costd);
+            let f: Vec3 = f0 + (Vec3::ONE - f0) * pow5(1.0 - costd);
 
             let spec: Vec3 = d * f * g / (4.0 * costl * costv);
 
@@ -510,7 +510,7 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
         let costv: f32 = surf.normal.dot(vdir);
 
         let ndl: f32 = costl.clamp(0.0, 1.0);
-        let mut cout: Vec3 = Vec3::zero();
+        let mut cout: Vec3 = Vec3::ZERO;
         if ndl > 0. {
             let r: f32 = surf.roughness;
             // G(h,l,v) factor
@@ -521,7 +521,7 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
 
             // F(h,l) factor
             let f0: Vec3 = mix(Vec3::splat(0.5), surf.basecolor, surf.metallic);
-            let f: Vec3 = f0 + (Vec3::one() - f0) * pow5(1. - costd);
+            let f: Vec3 = f0 + (Vec3::ONE - f0) * pow5(1. - costd);
 
             // Combines the BRDF as well as the pdf of this particular
             // sample direction.
@@ -557,8 +557,8 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
 
         let centerldir: Vec3 = (-surf.point).normalize();
 
-        let mut cout: Vec3 = Vec3::zero();
-        if surf.basecolor.dot(Vec3::one()) > SMALL_FLOAT {
+        let mut cout: Vec3 = Vec3::ZERO;
+        if surf.basecolor.dot(Vec3::ONE) > SMALL_FLOAT {
             cout += self.integrate_dir_light(self.ldir, Vec3::splat(0.3), surf);
             cout += self.integrate_dir_light(centerldir, vec3(0.3, 0.5, 1.0), surf);
             cout += self.integrate_env_light(surf) * (1.0 - 3.5 * ao);
@@ -589,7 +589,7 @@ impl<C0: SampleCube, C1: SampleCube> State<C0, C1> {
         // ----------------------------------------------------------------------
         // SHADING
 
-        let mut scenecol: Vec3 = Vec3::zero();
+        let mut scenecol: Vec3 = Vec3::ZERO;
         if scenemarch.y > SMALL_FLOAT {
             let mp: Vec3 = cam.origin + scenemarch.x * cam.dir;
             let mn: Vec3 = self.calc_normal(mp);

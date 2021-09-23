@@ -26,10 +26,10 @@
 //! */
 //! ```
 
-use shared::*;
-use spirv_std::glam::{
+use glam::{
     const_mat3, vec2, vec3, vec4, Mat2, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
 };
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -53,7 +53,7 @@ impl State {
         State {
             inputs,
             prm1: 0.0,
-            bs_mo: Vec2::zero(),
+            bs_mo: Vec2::ZERO,
         }
     }
 }
@@ -122,7 +122,7 @@ impl State {
     }
 
     fn render(&self, ro: Vec3, rd: Vec3, time: f32) -> Vec4 {
-        let mut rez: Vec4 = Vec4::zero();
+        let mut rez: Vec4 = Vec4::ZERO;
         const LDST: f32 = 8.0;
         let _lpos: Vec3 = (disp(time + LDST) * 0.5).extend(time + LDST);
         let mut t: f32 = 1.5;
@@ -139,7 +139,7 @@ impl State {
             let den: f32 = (mpv.x - 0.3).clamp(0.0, 1.0) * 1.12;
             let dn: f32 = (mpv.x + 2.0).clamp(0.0, 3.0);
 
-            let mut col: Vec4 = Vec4::zero();
+            let mut col: Vec4 = Vec4::ZERO;
             if mpv.x > 0.6 {
                 col = ((vec3(5.0, 0.4, 0.2)
                     + Vec3::splat(mpv.y * 0.1 + (pos.z * 0.4).sin() * 0.5 + 1.8))
@@ -167,7 +167,7 @@ impl State {
             i += 1;
         }
 
-        rez.clamp(Vec4::zero(), Vec4::one())
+        rez.clamp(Vec4::ZERO, Vec4::ONE)
     }
 }
 
@@ -190,7 +190,7 @@ fn i_lerp(a: Vec3, b: Vec3, x: f32) -> Vec3 {
     let lgt: f32 = Vec3::splat(1.0).dot(ic);
     let ff: f32 = dir.dot(ic.normalize());
     ic += 1.5 * dir * sd * ff * lgt;
-    ic.clamp(Vec3::zero(), Vec3::one())
+    ic.clamp(Vec3::ZERO, Vec3::ONE)
 }
 
 impl State {

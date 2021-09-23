@@ -10,8 +10,8 @@
 //! // Water turbulence effect by joltz0r 2013-07-04, improved 2013-07-07
 //! ```
 
+use glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -62,7 +62,7 @@ impl Inputs {
         c /= MAX_ITER as f32;
         c = 1.17 - c.powf(1.4);
         let mut colour: Vec3 = Vec3::splat(c.abs().powf(8.0));
-        colour = (colour + vec3(0.0, 0.35, 0.5)).clamp(Vec3::zero(), Vec3::one());
+        colour = (colour + vec3(0.0, 0.35, 0.5)).clamp(Vec3::ZERO, Vec3::ONE);
 
         if SHOW_TILING {
             let pixel: Vec2 = 2.0 / self.resolution.xy();

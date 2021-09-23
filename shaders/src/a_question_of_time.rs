@@ -26,10 +26,8 @@
 //! */
 //! ```
 
+use glam::{vec2, vec3, Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use spirv_std::glam::{
-    vec2, vec3, Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
-};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -62,7 +60,7 @@ fn stroke(d: f32, w: f32, s: f32, i: f32) -> f32 {
 }
 // a simple palette
 fn pal(d: f32) -> Vec3 {
-    0.5 * ((6.283 * d * vec3(2.0, 2.0, 1.0) + vec3(0.0, 1.4, 0.0)).cos() + Vec3::one())
+    0.5 * ((6.283 * d * vec3(2.0, 2.0, 1.0) + vec3(0.0, 1.4, 0.0)).cos() + Vec3::ONE)
 }
 // 2d rotation matrix
 fn uvr_rotate(a: f32) -> Mat2 {
@@ -83,7 +81,7 @@ fn apollonian(uv: Vec2) -> Vec3 {
     // the algorithm is recursive and must start with a initial descartes configuration
     // each vec3 represents a circle with the form vec3(centerx, centery, 1./radius)
     // the signed inverse radius is also called the bend (refer to the article above)
-    let mut dec: [Vec3; 4] = [Vec3::zero(), Vec3::zero(), Vec3::zero(), Vec3::zero()];
+    let mut dec: [Vec3; 4] = [Vec3::ZERO, Vec3::ZERO, Vec3::ZERO, Vec3::ZERO];
     // a DEC is a configuration of 4 circles tangent to each other
     // the easiest way to build the initial one it to construct a symetric Steiner Chain.
     // http://mathworld.wolfram.com/SteinerChain.html
@@ -155,7 +153,7 @@ fn apollonian(uv: Vec2) -> Vec3 {
 
 impl Inputs {
     fn scene(&self, mut uv: Vec2, ms: Vec4) -> Vec3 {
-        let mut ci: Vec2 = Vec2::zero();
+        let mut ci: Vec2 = Vec2::ZERO;
 
         // drag your mouse to apply circle inversion
         if ms.y != -2.0 && ms.w > -2.0 {

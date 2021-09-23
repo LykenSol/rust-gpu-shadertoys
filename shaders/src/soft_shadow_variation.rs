@@ -2,7 +2,7 @@
 //!
 //! Original comment:
 //! ```glsl
-//! //    
+//! //
 //! // Testing Sebastian Aaltonen's soft shadow improvement
 //! //
 //! // The technique is based on estimating a better closest point in ray
@@ -16,8 +16,8 @@
 //! // Go to lines 54 to compare both.
 //! ```
 
+use glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -40,7 +40,7 @@ fn sd_plane(p: Vec3) -> f32 {
 
 fn sd_box(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 //------------------------------------------------------------------
@@ -147,7 +147,7 @@ fn calc_ao(pos: Vec3, nor: Vec3) -> f32 {
 }
 
 fn render(ro: Vec3, rd: Vec3, technique: i32) -> Vec3 {
-    let mut col: Vec3 = Vec3::zero();
+    let mut col: Vec3 = Vec3::ZERO;
     let t: f32 = cast_ray(ro, rd);
 
     if t > -0.5 {
@@ -204,7 +204,7 @@ impl Inputs {
             0
         };
 
-        let mut tot: Vec3 = Vec3::zero();
+        let mut tot: Vec3 = Vec3::ZERO;
 
         let mut m = 0;
         while m < AA {

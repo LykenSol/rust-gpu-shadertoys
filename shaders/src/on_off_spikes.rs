@@ -5,10 +5,10 @@
 //! // On/Off Spikes, fragment shader by movAX13h, oct 2014
 //! ```
 
-use shared::*;
-use spirv_std::glam::{
+use glam::{
     const_vec3, vec2, vec3, Mat2, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
 };
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -40,7 +40,7 @@ impl State {
 
             glow: 0.0,
             bite: 0.0,
-            sphere_col: Vec3::zero(),
+            sphere_col: Vec3::ZERO,
             sun: SUN_POS.normalize(),
             focus: 5.0,
             far: 23.0,
@@ -149,14 +149,14 @@ fn nebula(dir: Vec3) -> Vec3 {
     let puffy: f32 = square(noise2(dir.xz() * 4.0 + vec2(30.0, 10.0)) * dir.y);
 
     (puffy_hue * puffy * (1.0 - streaky) + streaky * streaky_hue)
-        .clamp(Vec3::zero(), Vec3::one())
+        .clamp(Vec3::ZERO, Vec3::ONE)
         .powf(1.0 / 2.2)
 }
 // ---
 
 fn sd_box(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 fn sd_sphere(p: Vec3, r: f32) -> f32 {
@@ -165,11 +165,11 @@ fn sd_sphere(p: Vec3, r: f32) -> f32 {
 
 fn sd_capped_cylinder(p: Vec3, h: Vec2) -> f32 {
     let d: Vec2 = vec2(p.xy().length(), p.z).abs() - h;
-    d.x.max(d.y).min(0.0) + d.max(Vec2::zero()).length()
+    d.x.max(d.y).min(0.0) + d.max(Vec2::ZERO).length()
 }
 
 fn rotate(p: Vec2, a: f32) -> Vec2 {
-    let mut r: Vec2 = Vec2::zero();
+    let mut r: Vec2 = Vec2::ZERO;
     r.x = p.x * a.cos() - p.y * a.sin();
     r.y = p.x * a.sin() + p.y * a.cos();
     r
@@ -378,7 +378,7 @@ impl State {
             let edge: f32 = self.edges(ray);
             col = mix(
                 col,
-                Vec3::zero(),
+                Vec3::ZERO,
                 h.edge * edge * smoothstep(0.3, 0.35, ray.length()),
             );
         }
@@ -436,7 +436,7 @@ impl State {
         }
 
         col -= Vec3::splat(0.2 * smoothstep(0.6, 3.7, pos.length()));
-        col = col.clamp(Vec3::zero(), Vec3::one());
+        col = col.clamp(Vec3::ZERO, Vec3::ONE);
         col = col.powf_vec(vec3(2.2, 2.4, 2.5)) * 3.9;
         col = col.powf_vec(Vec3::splat(1.0 / GAMMA));
 

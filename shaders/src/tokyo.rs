@@ -13,11 +13,11 @@
 //! // I have never been in Tokyo btw.
 //! ```
 
-use shared::*;
-use spirv_std::glam::{
+use glam::{
     const_mat2, const_vec3, vec2, vec3, vec4, Mat2, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4,
     Vec4Swizzles,
 };
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -49,11 +49,11 @@ impl State {
 
             d_l: 0.0,
 
-            int1: Vec3::zero(),
-            int2: Vec3::zero(),
-            nor1: Vec3::zero(),
-            lint1: Vec4::zero(),
-            lint2: Vec4::zero(),
+            int1: Vec3::ZERO,
+            int2: Vec3::ZERO,
+            nor1: Vec3::ZERO,
+            lint1: Vec4::ZERO,
+            lint2: Vec4::ZERO,
         }
     }
 }
@@ -111,12 +111,12 @@ fn fbm(mut p: Vec2) -> f32 {
 // distance primitives
 
 fn ud_round_box(p: Vec3, b: Vec3, r: f32) -> f32 {
-    (p.abs() - b).max(Vec3::zero()).length() - r
+    (p.abs() - b).max(Vec3::ZERO).length() - r
 }
 
 fn sd_box(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 fn sd_sphere(p: Vec3, s: f32) -> f32 {
@@ -125,7 +125,7 @@ fn sd_sphere(p: Vec3, s: f32) -> f32 {
 
 fn sd_cylinder(p: Vec3, h: Vec2) -> f32 {
     let d: Vec2 = vec2(p.xz().length(), p.y).abs() - h;
-    d.x.max(d.y).min(0.0) + d.max(Vec2::zero()).length()
+    d.x.max(d.y).min(0.0) + d.max(Vec2::ZERO).length()
 }
 
 //----------------------------------------------------------------------
@@ -152,7 +152,7 @@ fn map_car(p0: Vec3) -> f32 {
     let mut p: Vec3 = p0 + vec3(0.0, 1.24, 0.0);
     let mut r: f32 = p.yz().length();
     let mut d: f32 = vec3(p.x.abs() - 0.35, r - 1.92, -p.y + 1.4)
-        .max(Vec3::zero())
+        .max(Vec3::ZERO)
         .length()
         - 0.05;
     d = d.max(p.z - 1.0);
@@ -163,7 +163,7 @@ fn map_car(p0: Vec3) -> f32 {
     d = smin(
         d,
         vec3(p.x - 0.08, r - 0.25, -p.y - 0.08)
-            .max(Vec3::zero())
+            .max(Vec3::ZERO)
             .length()
             - 0.04,
         8.0,
@@ -453,7 +453,7 @@ impl State {
 
     pub fn main_image(&mut self, frag_color: &mut Vec4, frag_coord: Vec2) {
         let mut q: Vec2 = frag_coord / self.inputs.resolution.xy();
-        let mut p: Vec2 = -Vec2::one() + 2.0 * q;
+        let mut p: Vec2 = -Vec2::ONE + 2.0 * q;
         p.x *= self.inputs.resolution.x / self.inputs.resolution.y;
 
         if q.y < 0.12 || q.y >= 0.88 {
@@ -532,9 +532,9 @@ impl State {
             col += 0.25 * f * (Vec3::splat(0.2) + BACKGROUND_COLOR);
 
             // post processing
-            col = col.clamp(Vec3::zero(), Vec3::one()).powf(0.4545);
+            col = col.clamp(Vec3::ZERO, Vec3::ONE).powf(0.4545);
             col *= 1.2 * vec3(1.0, 0.99, 0.95);
-            col = (1.06 * col - Vec3::splat(0.03)).clamp(Vec3::zero(), Vec3::one());
+            col = (1.06 * col - Vec3::splat(0.03)).clamp(Vec3::ZERO, Vec3::ONE);
             q.y = (q.y - 0.12) * (1. / 0.76);
             col *= Vec3::splat(0.5)
                 + Vec3::splat(0.5) * (16.0 * q.x * q.y * (1.0 - q.x) * (1.0 - q.y)).powf(0.1);

@@ -1,13 +1,14 @@
 //! Ported to Rust from <https://www.shadertoy.com/view/ttKGDt>
 
-use spirv_std::glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use glam::{vec3, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4};
+use shared::*;
 
 use core::f32::consts::PI;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
 #[cfg(target_arch = "spirv")]
-use {shared::FloatExt, spirv_std::num_traits::Float};
+use spirv_std::num_traits::Float;
 
 pub struct Inputs {
     pub resolution: Vec3,
@@ -33,7 +34,7 @@ fn pmod(p: Vec2, r: f32) -> Vec2 {
 
 fn box_(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 impl Inputs {

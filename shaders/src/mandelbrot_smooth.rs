@@ -10,8 +10,8 @@
 //! // http://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
 //! ```
 
+use glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -41,7 +41,7 @@ impl Inputs {
         }
         const B: f32 = 256.0;
         let mut l: f32 = 0.0;
-        let mut z: Vec2 = Vec2::zero();
+        let mut z: Vec2 = Vec2::ZERO;
         let mut i = 0;
         while i < 512 {
             z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
@@ -67,7 +67,7 @@ impl Inputs {
     }
 
     pub fn main_image(&self, frag_color: &mut Vec4, frag_coord: Vec2) {
-        let mut col: Vec3 = Vec3::zero();
+        let mut col: Vec3 = Vec3::ZERO;
 
         let mut m = 0;
         while m < AA {

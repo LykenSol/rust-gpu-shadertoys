@@ -17,14 +17,15 @@ winit = { version = "0.23", features = ["web-sys"] }
 wgpu-subscriber = "0.1.0"
 
 [build-dependencies]
-spirv-builder = { version = "*", default-features = false }
+spirv-builder = { version = "0.4.0-alpha.0", default-features = false }
 
 [workspace]
 members = ["shaders"]
 
 [patch.crates-io]
-spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "a173208d803aeac9295464df703c53d987db2664" }
-spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "a173208d803aeac9295464df703c53d987db2664" }
+spirv-builder = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "79200bb777d458ff1265563048aceeee2a82a464" }
+spirv-std = { git = "https://github.com/EmbarkStudios/rust-gpu", rev = "79200bb777d458ff1265563048aceeee2a82a464" }
+glam = { git = "https://github.com/bitshifter/glam-rs.git", rev ="b3e94fb" }
 
 # Compile build-dependencies in release mode with
 # the same settings as regular dependencies.

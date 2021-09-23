@@ -10,8 +10,8 @@
 //! // ----------------------------------------------------------------------------
 //! ```
 
+use glam::{const_vec3, vec2, vec3, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{const_vec3, vec2, vec3, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -133,7 +133,7 @@ const ATMOSPHERE_RADIUS: f32 = 6420e3; // (m)
 const SUN_POWER: f32 = 20.0;
 
 const ATMOSPHERE: Sphere = Sphere {
-    origin: Vec3::zero(),
+    origin: Vec3::ZERO,
     radius: ATMOSPHERE_RADIUS,
     _material: 0,
 };
@@ -172,7 +172,7 @@ impl State {
         let mut t0: f32 = 0.0;
         let mut t1: f32 = 0.0;
         if !isect_sphere(ray, ATMOSPHERE, &mut t0, &mut t1) {
-            return Vec3::zero();
+            return Vec3::ZERO;
         }
 
         let march_step: f32 = t1 / NUM_SAMPLES as f32;
@@ -199,8 +199,8 @@ impl State {
         let mut optical_depth_r: f32 = 0.0;
         let mut optical_depth_m: f32 = 0.0;
 
-        let mut sum_r: Vec3 = Vec3::zero();
-        let mut sum_m: Vec3 = Vec3::zero();
+        let mut sum_r: Vec3 = Vec3::ZERO;
+        let mut sum_m: Vec3 = Vec3::ZERO;
         let mut march_pos: f32 = 0.0;
 
         let mut i = 0;
@@ -247,7 +247,7 @@ impl State {
         let aspect_ratio: Vec2 = vec2(self.inputs.resolution.x / self.inputs.resolution.y, 1.0);
         let fov: f32 = 45.0.deg_to_radians().tan();
         let point_ndc: Vec2 = frag_coord / self.inputs.resolution.xy();
-        let point_cam: Vec3 = ((2.0 * point_ndc - Vec2::one()) * aspect_ratio * fov).extend(-1.0);
+        let point_cam: Vec3 = ((2.0 * point_ndc - Vec2::ONE) * aspect_ratio * fov).extend(-1.0);
 
         let col: Vec3;
 

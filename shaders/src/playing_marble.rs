@@ -7,8 +7,8 @@
 //! ```
 
 use crate::SampleCube;
+use glam::{vec2, vec3, vec4, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, vec4, Mat2, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -67,7 +67,7 @@ impl<C0: SampleCube> Inputs<C0> {
         let mut t: f32 = tminmax.x;
         let dt: f32 = 0.02;
         //let dt: f32 = 0.2 - 0.195 * (self.time * 0.05).cos(); //animated
-        let mut col: Vec3 = Vec3::zero();
+        let mut col: Vec3 = Vec3::ZERO;
         let mut c: f32 = 0.0;
         let mut i = 0;
         while i < 64 {
@@ -91,7 +91,7 @@ impl<C0: SampleCube> Inputs<C0> {
         let q: Vec2 = frag_coord / self.resolution.xy();
         let mut p: Vec2 = Vec2::splat(-1.0) + 2.0 * q;
         p.x *= self.resolution.x / self.resolution.y;
-        let mut m: Vec2 = Vec2::zero();
+        let mut m: Vec2 = Vec2::ZERO;
         if self.mouse.z > 0.0 {
             m = self.mouse.xy() / self.resolution.xy() * 3.14;
         }
@@ -104,7 +104,7 @@ impl<C0: SampleCube> Inputs<C0> {
         ro = (rot(m.x + 0.1 * time).transpose() * ro.xz())
             .extend(ro.y)
             .xzy();
-        let ta: Vec3 = Vec3::zero();
+        let ta: Vec3 = Vec3::ZERO;
         let ww: Vec3 = (ta - ro).normalize();
         let uu: Vec3 = (ww.cross(vec3(0.0, 1.0, 0.0))).normalize();
         let vv: Vec3 = (uu.cross(ww)).normalize();
@@ -124,8 +124,8 @@ impl<C0: SampleCube> Inputs<C0> {
 
         //shade
 
-        col = 0.5 * (Vec3::one() + col).ln();
-        col = col.clamp(Vec3::zero(), Vec3::one());
+        col = 0.5 * (Vec3::ONE + col).ln();
+        col = col.clamp(Vec3::ZERO, Vec3::ONE);
 
         *frag_color = col.extend(1.0);
     }

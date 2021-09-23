@@ -14,8 +14,8 @@
 //! */
 //! ```
 
+use glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 use shared::*;
-use spirv_std::glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -89,7 +89,7 @@ impl State {
         // Rounded box
         let voxel_radius: f32 = 0.25;
         (p.abs() + Vec3::splat(-0.5 + voxel_radius))
-            .max(Vec3::zero())
+            .max(Vec3::ZERO)
             .length()
             - voxel_radius
     }
@@ -212,7 +212,7 @@ impl State {
     // Normal at a given point
     fn normal(&mut self, mut p: Vec3, voxelized: f32) -> Vec3 {
         let h: Vec2 = vec2(DELTA, -DELTA);
-        let mut n: Vec3 = Vec3::zero();
+        let mut n: Vec3 = Vec3::ZERO;
         if voxelized > 0.5 {
             p = (p + Vec3::splat(0.5)).gl_fract() - Vec3::splat(0.5);
             n = h.xxx() * self.dist_voxel(p + h.xxx())
@@ -232,28 +232,24 @@ impl State {
 // HSV to RGB
 fn hsv2rgb(mut hsv: Vec3) -> Vec3 {
     if HSV2RGB_SAFE {
-        hsv = hsv
-            .yz()
-            .clamp(Vec2::zero(), Vec2::one())
-            .extend(hsv.x)
-            .zxy();
+        hsv = hsv.yz().clamp(Vec2::ZERO, Vec2::ONE).extend(hsv.x).zxy();
     }
     if HSV2RGB_FAST {
         hsv.z
-            * (Vec3::one()
+            * (Vec3::ONE
                 + 0.5
                     * hsv.y
                     * ((2.0 * PI * (Vec3::splat(hsv.x) + vec3(0.0, 2.0 / 3.0, 1.0 / 3.0))).cos()
-                        - Vec3::one()))
+                        - Vec3::ONE))
     } else {
         hsv.z
-            * (Vec3::one()
+            * (Vec3::ONE
                 + Vec3::splat(hsv.y)
                     * (((Vec3::splat(hsv.x) + vec3(0.0, 2.0 / 3.0, 1.0 / 3.0)).gl_fract() * 6.0
                         - Vec3::splat(3.0))
                     .abs()
                         - Vec3::splat(2.0))
-                    .clamp(-Vec3::one(), Vec3::zero()))
+                    .clamp(-Vec3::ONE, Vec3::ZERO))
     }
 }
 
@@ -296,7 +292,7 @@ impl State {
         let cos_pitch: f32 = pitch_angle.cos();
         let sin_pitch: f32 = pitch_angle.sin();
 
-        let mut camera_orientation: Mat3 = Mat3::zero();
+        let mut camera_orientation: Mat3 = Mat3::ZERO;
         camera_orientation.x_axis = vec3(cos_yaw, 0.0, -sin_yaw);
         camera_orientation.y_axis = vec3(sin_yaw * sin_pitch, cos_pitch, cos_yaw * sin_pitch);
         camera_orientation.z_axis = vec3(sin_yaw * cos_pitch, -sin_pitch, cos_yaw * cos_pitch);
@@ -384,11 +380,7 @@ impl State {
         }
 
         // Set the fragment color
-        final_color = mix(
-            final_color.powf(GAMMA) + glow_color,
-            Vec3::one(),
-            mode_switch,
-        );
+        final_color = mix(final_color.powf(GAMMA) + glow_color, Vec3::ONE, mode_switch);
         *frag_color = final_color.extend(1.0);
     }
 }

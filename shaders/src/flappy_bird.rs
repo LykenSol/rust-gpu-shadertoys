@@ -8,12 +8,13 @@
 //! // https://www.shadertoy.com/view/Msj3zD
 //! ```
 
-use spirv_std::glam::{const_vec4, vec2, vec4, Vec2, Vec3, Vec4};
+use glam::{const_vec4, vec2, vec4, Vec2, Vec3, Vec4};
+use shared::*;
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
 #[cfg(target_arch = "spirv")]
-use {shared::*, spirv_std::num_traits::Float};
+use spirv_std::num_traits::Float;
 
 pub struct Inputs {
     pub resolution: Vec3,
@@ -31,7 +32,7 @@ impl State {
         State {
             inputs,
 
-            frag_color: Vec4::zero(),
+            frag_color: Vec4::ZERO,
         }
     }
 }

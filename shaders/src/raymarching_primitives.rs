@@ -17,10 +17,8 @@
 //! // https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm
 //! ```
 
+use glam::{vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use spirv_std::glam::{
-    vec2, vec3, Mat3, Vec2, Vec2Swizzles, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles,
-};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -62,16 +60,16 @@ fn sd_sphere(p: Vec3, s: f32) -> f32 {
 
 fn sd_box(p: Vec3, b: Vec3) -> f32 {
     let d: Vec3 = p.abs() - b;
-    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::zero()).length()
+    d.x.max(d.y.max(d.z)).min(0.0) + d.max(Vec3::ZERO).length()
 }
 
 fn sd_bounding_box(mut p: Vec3, b: Vec3, e: f32) -> f32 {
     p = p.abs() - b;
     let q: Vec3 = (p + Vec3::splat(e)).abs() - Vec3::splat(e);
 
-    (vec3(p.x, q.y, q.z).max(Vec3::zero()).length() + p.x.max(q.y.max(q.z)).min(0.0))
-        .min(vec3(q.x, p.y, q.z).max(Vec3::zero()).length() + q.x.max(p.y.max(q.z)).min(0.0))
-        .min(vec3(q.x, q.y, p.z).max(Vec3::zero()).length() + q.x.max(q.y.max(p.z)).min(0.0))
+    (vec3(p.x, q.y, q.z).max(Vec3::ZERO).length() + p.x.max(q.y.max(q.z)).min(0.0))
+        .min(vec3(q.x, p.y, q.z).max(Vec3::ZERO).length() + q.x.max(p.y.max(q.z)).min(0.0))
+        .min(vec3(q.x, q.y, p.z).max(Vec3::ZERO).length() + q.x.max(q.y.max(p.z)).min(0.0))
 }
 // approximated
 fn sd_ellipsoid(p: Vec3, r: Vec3) -> f32 {
@@ -104,7 +102,7 @@ fn sd_hex_prism(mut p: Vec3, h: Vec2) -> f32 {
         (p.xy() - vec2(p.x.clamp(-k.z * h.x, k.z * h.x), h.x)).length() * (p.y - h.x).gl_sign(),
         p.z - h.y,
     );
-    d.x.max(d.y).min(0.0) + d.max(Vec2::zero()).length()
+    d.x.max(d.y).min(0.0) + d.max(Vec2::ZERO).length()
 }
 
 fn sd_octogon_prism(mut p: Vec3, r: f32, h: f32) -> f32 {
@@ -120,7 +118,7 @@ fn sd_octogon_prism(mut p: Vec3, r: f32, h: f32) -> f32 {
     // polygon side
     p = (p.xy() - vec2(p.x.clamp(-k.z * r, k.z * r), r)).extend(p.z);
     let d: Vec2 = vec2(p.xy().length() * p.y.gl_sign(), p.z - h);
-    d.x.max(d.y).min(0.0) + d.max(Vec2::zero()).length()
+    d.x.max(d.y).min(0.0) + d.max(Vec2::ZERO).length()
 }
 
 fn sd_capsule(p: Vec3, a: Vec3, b: Vec3, r: f32) -> f32 {
@@ -186,13 +184,13 @@ fn sd_tri_prism(mut p: Vec3, mut h: Vec2) -> f32 {
     p.x -= p.x.clamp(-2.0, 0.0);
     let d1: f32 = p.xy().length() * (-p.y).gl_sign() * h.x;
     let d2: f32 = p.z.abs() - h.y;
-    vec2(d1, d2).max(Vec2::zero()).length() + d1.max(d2).min(0.0)
+    vec2(d1, d2).max(Vec2::ZERO).length() + d1.max(d2).min(0.0)
 }
 
 // vertical
 fn sd_cylinder_vertical(p: Vec3, h: Vec2) -> f32 {
     let d: Vec2 = vec2(p.xz().length(), p.y).abs() - h;
-    d.x.max(d.y).min(0.0) + d.max(Vec2::zero()).length()
+    d.x.max(d.y).min(0.0) + d.max(Vec2::ZERO).length()
 }
 
 // arbitrary orientation
@@ -279,9 +277,9 @@ fn sd_octahedron(mut p: Vec3, s: f32) -> f32 {
 
     // exact distance
     if false {
-        let mut o: Vec3 = (3.0 * p - Vec3::splat(m)).min(Vec3::zero());
+        let mut o: Vec3 = (3.0 * p - Vec3::splat(m)).min(Vec3::ZERO);
         o = (6.0 * p - Vec3::splat(m) * 2.0 - o * 3.0 + Vec3::splat(o.x + o.y + o.z))
-            .max(Vec3::zero());
+            .max(Vec3::ZERO);
         return (p - s * o / (o.x + o.y + o.z)).length();
     }
 
@@ -347,7 +345,7 @@ fn sd_rhombus(mut p: Vec3, la: f32, lb: f32, h: f32, ra: f32) -> f32 {
             - ra,
         p.y - h,
     );
-    q.x.max(q.y).min(0.0) + q.max(Vec2::zero()).length()
+    q.x.max(q.y).min(0.0) + q.max(Vec2::ZERO).length()
 }
 
 //------------------------------------------------------------------
@@ -649,7 +647,7 @@ impl Inputs {
                 .normalize()
         } else {
             // inspired by tdhooper and klems - a way to prevent the compiler from inlining map() 4 times
-            let mut n: Vec3 = Vec3::zero();
+            let mut n: Vec3 = Vec3::ZERO;
             let mut i = self.zero();
             while i < 4 {
                 let e: Vec3 = 0.5773
@@ -659,7 +657,7 @@ impl Inputs {
                             ((i >> 1) & 1) as f32,
                             (i & 1) as f32,
                         )
-                        - Vec3::one());
+                        - Vec3::ONE);
                 n += e * map(pos + 0.0005 * e).x;
                 //if n.x+n.y+n.z>100.0 {break;}
                 i += 1;
@@ -734,7 +732,7 @@ impl Inputs {
             // lighting
             let occ: f32 = self.calc_ao(pos, nor);
 
-            let mut lin: Vec3 = Vec3::zero();
+            let mut lin: Vec3 = Vec3::ZERO;
 
             // sun
             {
@@ -779,7 +777,7 @@ impl Inputs {
 
             col = mix(col, vec3(0.7, 0.7, 0.9), 1.0 - (-0.0001 * t * t * t).exp());
         }
-        col.clamp(Vec3::zero(), Vec3::one())
+        col.clamp(Vec3::ZERO, Vec3::ONE)
     }
 }
 
@@ -807,7 +805,7 @@ impl Inputs {
         // camera-to-world transformation
         let ca: Mat3 = set_camera(ro, ta, 0.0);
 
-        let mut tot: Vec3 = Vec3::zero();
+        let mut tot: Vec3 = Vec3::ZERO;
         let mut p: Vec2;
 
         let mut m = self.zero();

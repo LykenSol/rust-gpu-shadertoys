@@ -17,8 +17,8 @@
 //! // Twitter: @The_ArtOfCode
 //! ```
 
+use glam::{const_vec3, vec2, vec3, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 use shared::*;
-use spirv_std::glam::{const_vec3, vec2, vec3, Mat3, Vec2, Vec3, Vec3Swizzles, Vec4, Vec4Swizzles};
 
 // Note: This cfg is incorrect on its surface, it really should be "are we compiling with std", but
 // we tie #[no_std] above to the same condition, so it's fine.
@@ -46,8 +46,8 @@ impl State {
         State {
             inputs,
 
-            bg: Vec3::zero(),
-            accent: Vec3::zero(),
+            bg: Vec3::ZERO,
+            accent: Vec3::ZERO,
 
             cam: Camera::default(),
         }
@@ -386,12 +386,12 @@ impl State {
         let _d_s: f32 = MAX_DISTANCE;
 
         let _pos: Vec3 = vec3(0.0, 0.0, 0.0);
-        let _n: Vec3 = Vec3::zero();
+        let _n: Vec3 = Vec3::ZERO;
         let mut o: De = De::default();
         let mut s: De = De::default();
 
         let mut d_c: f32 = MAX_DISTANCE;
-        let mut p: Vec3 = Vec3::zero();
+        let mut p: Vec3 = Vec3::ZERO;
         let mut q: Rc = Rc::default();
         let t: f32 = self.inputs.time;
         let grid: Vec3 = vec3(6.0, 30.0, 6.0);
@@ -401,20 +401,20 @@ impl State {
             p = r.o + r.d * d;
 
             if SINGLE {
-                s = self.map(p, Vec3::zero());
+                s = self.map(p, Vec3::ZERO);
             } else {
                 p.y -= t; // make the move up
                 p.x += t; // make cam fly forward
 
                 q = repeat(p, grid);
 
-                let r_c: Vec3 = ((2. * Vec3::zero().step(r.d) - Vec3::one()) * q.h - q.p) / r.d; // ray to cell boundary
+                let r_c: Vec3 = ((2. * Vec3::ZERO.step(r.d) - Vec3::ONE) * q.h - q.p) / r.d; // ray to cell boundary
                 d_c = r_c.x.min(r_c.y).min(r_c.z) + 0.01; // distance to cell just past boundary
 
                 let n: f32 = n3(q.id);
                 q.p += (n31(n) - Vec3::splat(0.5)) * grid * vec3(0.5, 0.7, 0.5);
 
-                if dist(q.p.xz(), r.d.xz(), Vec2::zero()) < 1.1 {
+                if dist(q.p.xz(), r.d.xz(), Vec2::ZERO) < 1.1 {
                     //if(DistRaySegment(q.p, r.d, vec3(0., -6., 0.), vec3(0., -3.3, 0)) <1.1)
                     s = self.map(q.p, q.id);
                 } else {
@@ -512,7 +512,7 @@ impl State {
                 let mut density: f32 = 0.0;
                 let mut i = 0.0;
                 while i < VOLUME_STEPS {
-                    let sd: f32 = sph(o.uv, cam_ray.d, Vec3::zero(), 0.8 + i * 0.015).x;
+                    let sd: f32 = sph(o.uv, cam_ray.d, Vec3::ZERO, 0.8 + i * 0.015).x;
                     if sd != MAX_DISTANCE {
                         let intersect: Vec2 = o.uv.xz() + cam_ray.d.xz() * sd;
 
